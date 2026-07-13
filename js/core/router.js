@@ -9,6 +9,7 @@
     properties: { title: "Properties", eyebrow: "PORTFOLIO" },
     tenants: { title: "Tenants", eyebrow: "OCCUPANCY" },
     contracts: { title: "Contracts", eyebrow: "LEASE MANAGEMENT" },
+    maintenance: { title: "Maintenance", eyebrow: "OPERATIONS" },
     payments: { title: "Payments & Receipts", eyebrow: "FINANCIAL RECORDS" },
     reports: { title: "Reports", eyebrow: "PORTFOLIO INTELLIGENCE" },
     import: { title: "Data Import", eyebrow: "BULK MIGRATION", permission: "create" },
