@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>59 Real Estate · Demo v0.4.0</title>
+  <link rel="icon" href="assets/logos/logo-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles/variables.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/base.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/layout.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/components.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/modules/dashboard.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/modules/properties.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/modules/unit.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/modules/reports.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/responsive.css?v=0.4.0">
+  <link rel="stylesheet" href="styles/theme.css?v=0.4.0">
+</head>
+<body>
+  <noscript>This system requires JavaScript.</noscript>
+
+  <section id="login-screen" class="login-screen login-fixed-night" aria-label="Secure sign in">
+    <div class="login-visual" aria-hidden="true">
+      <div class="login-visual-inner">
+        <img src="assets/logos/logo-full.svg" class="login-logo-wide" alt="">
+        <p>Private property portfolio intelligence.</p>
+        <div class="login-stat-grid">
+          <div><strong>11</strong><span>Properties</span></div>
+          <div><strong>395</strong><span>Units</span></div>
+          <div><strong>Live</strong><span>Portfolio view</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-card">
+        <div class="login-brand-mobile">
+          <img src="assets/logos/logo-full.svg" alt="59 Real Estate">
+        </div>
+        <div class="eyebrow">PRIVATE &amp; CONFIDENTIAL</div>
+        <h1>Secure access</h1>
+        <p class="muted">Sign in to the 59 Real Estate demo workspace.</p>
+
+        <form id="login-form" class="form-stack" autocomplete="off">
+          <label>
+            <span>Email</span>
+            <input id="login-email" type="email" required placeholder="name@59re.demo" autocomplete="username">
+          </label>
+          <label>
+            <span>Password</span>
+            <div class="password-field">
+              <input id="login-password" type="password" required placeholder="Enter password" autocomplete="current-password">
+              <button type="button" id="toggle-password" class="icon-button compact" aria-label="Show password">Show</button>
+            </div>
+          </label>
+          <div id="login-error" class="form-error" role="alert"></div>
+          <button type="submit" class="button button-primary button-large">Secure sign in</button>
+        </form>
+
+        <div class="demo-divider"><span>Demo access</span></div>
+        <div class="demo-accounts">
+          <button type="button" data-demo-role="ceo" class="demo-account">
+            <span class="demo-role-mark">C</span>
+            <span><strong>CEO view</strong><small>Executive, read only</small></span>
+          </button>
+          <button type="button" data-demo-role="manager" class="demo-account">
+            <span class="demo-role-mark">P</span>
+            <span><strong>Property Manager</strong><small>Daily CRUD operations</small></span>
+          </button>
+          <button type="button" data-demo-role="admin" class="demo-account">
+            <span class="demo-role-mark">A</span>
+            <span><strong>Administrator</strong><small>System and backup controls</small></span>
+          </button>
+        </div>
+        <p class="login-footnote">Demo mode stores records only in this browser using IndexedDB. Do not use confidential tenant information yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="app-shell" class="app-shell is-hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <img src="assets/logos/logo-mark.svg" alt="59 Real Estate">
+        <div>
+          <strong>59 Real Estate</strong>
+          <span>Portfolio System</span>
+        </div>
+      </div>
+
+      <div class="mode-badge"><span></span> Demo · Local mode</div>
+
+      <nav id="primary-navigation" class="primary-navigation" aria-label="Main navigation">
+        <div class="nav-group-label">Overview</div>
+        <button data-route="dashboard" data-permission="view" class="nav-item active"><span class="nav-symbol">◆</span><span>Dashboard</span></button>
+        <button data-route="actions" data-permission="view" class="nav-item"><span class="nav-symbol">!</span><span>Action Center</span><b id="nav-action-count" class="nav-count">0</b></button>
+
+        <div class="nav-group-label">Portfolio</div>
+        <button data-route="properties" data-permission="view" class="nav-item"><span class="nav-symbol">▦</span><span>Properties &amp; Units</span></button>
+        <button data-route="tenants" data-permission="view" class="nav-item"><span class="nav-symbol">◎</span><span>Tenants</span></button>
+        <button data-route="contracts" data-permission="view" class="nav-item"><span class="nav-symbol">▤</span><span>Contracts</span></button>
+
+        <div class="nav-group-label">Finance &amp; Reports</div>
+        <button data-route="payments" data-permission="view" class="nav-item"><span class="nav-symbol">◫</span><span>Payments &amp; Receipts</span></button>
+        <button data-route="reports" data-permission="view" class="nav-item"><span class="nav-symbol">▥</span><span>Reports</span></button>
+
+        <div class="nav-group-label" data-permission="create">Data</div>
+        <button data-route="import" data-permission="create" class="nav-item"><span class="nav-symbol">⇧</span><span>Data Import</span></button>
+        <button data-route="settings" data-permission="admin" class="nav-item"><span class="nav-symbol">⚙</span><span>System Settings</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div id="sidebar-user-initials" class="avatar">--</div>
+          <div><strong id="sidebar-user-name">User</strong><span id="sidebar-user-role">Role</span></div>
+        </div>
+        <button id="logout-button" class="button button-inverse button-full">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="mobile-menu-button" class="icon-button mobile-menu-button" aria-label="Open menu">☰</button>
+          <div>
+            <div id="page-eyebrow" class="eyebrow">PORTFOLIO</div>
+            <h2 id="page-title">Executive Dashboard</h2>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button id="quick-add-button" class="button button-accent quick-add-button" data-permission="create" type="button"><span>＋</span><span>New</span></button>
+          <div class="global-search-wrap">
+            <span>⌕</span>
+            <input id="global-search" type="search" placeholder="Search property, unit, tenant..." autocomplete="off">
+            <div id="global-search-results" class="search-results is-hidden"></div>
+          </div>
+          <button id="theme-toggle" class="theme-toggle topbar-theme-toggle" type="button" aria-label="Switch theme"><span class="theme-icon">☀</span><span class="theme-label">Day</span></button>
+          <button id="presentation-button" class="button button-secondary">Presentation</button>
+          <button id="topbar-user-button" class="topbar-user" type="button">
+            <span id="topbar-user-initials" class="avatar avatar-small">--</span>
+            <span><strong id="topbar-user-name">User</strong><small id="topbar-user-role">Role</small></span>
+          </button>
+        </div>
+      </header>
+
+      <main id="app-view" class="app-view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div id="modal-root" class="modal-root" aria-live="polite"></div>
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div id="loading-overlay" class="loading-overlay is-hidden"><div class="loader-mark">59</div><span>Preparing portfolio…</span></div>
+
+  <script src="js/core/app-state.js?v=0.4.0"></script>
+  <script src="js/utilities/formatters.js?v=0.4.0"></script>
+  <script src="js/data/seed-data.js?v=0.4.0"></script>
+  <script src="js/data/indexeddb-provider.js?v=0.4.0"></script>
+  <script src="js/services/data-service.js?v=0.4.0"></script>
+  <script src="js/services/auth-service.js?v=0.4.0"></script>
+  <script src="js/services/import-service.js?v=0.4.0"></script>
+  <script src="js/core/ui.js?v=0.4.0"></script>
+  <script src="js/core/router.js?v=0.4.0"></script>
+  <script src="js/modules/dashboard.js?v=0.4.0"></script>
+  <script src="js/modules/actions.js?v=0.4.0"></script>
+  <script src="js/modules/properties.js?v=0.4.0"></script>
+  <script src="js/modules/unit-detail.js?v=0.4.0"></script>
+  <script src="js/modules/tenants.js?v=0.4.0"></script>
+  <script src="js/modules/contracts.js?v=0.4.0"></script>
+  <script src="js/modules/payments.js?v=0.4.0"></script>
+  <script src="js/modules/reports.js?v=0.4.0"></script>
+  <script src="js/modules/import.js?v=0.4.0"></script>
+  <script src="js/modules/settings.js?v=0.4.0"></script>
+  <script src="js/main.js?v=0.4.0"></script>
+</body>
+</html>
