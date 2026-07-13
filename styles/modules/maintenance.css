@@ -1,0 +1,132 @@
+.maintenance-hero { margin-bottom:18px; }
+.maintenance-kpi-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
+.maintenance-kpi { min-height:126px; padding:19px; text-align:left; border:1px solid var(--line); border-radius:var(--radius-md); color:var(--text); background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02)); display:flex; flex-direction:column; justify-content:space-between; }
+.maintenance-kpi:hover { border-color:var(--gold); background:var(--gold-wash); }
+.maintenance-kpi span { color:var(--text-muted); font-size:.67rem; text-transform:uppercase; letter-spacing:.09em; font-weight:800; }
+.maintenance-kpi strong { font-size:clamp(1.75rem,3vw,2.45rem); letter-spacing:-.055em; }
+.maintenance-kpi small { color:var(--text-muted); font-size:.68rem; }
+.maintenance-kpi.warning strong { color:var(--warning); }
+.maintenance-kpi.cost { color:#111; background:var(--gold); border-color:var(--gold); }
+.maintenance-kpi.cost span,.maintenance-kpi.cost small { color:rgba(17,17,17,.68); }
+.maintenance-tabs { display:flex; gap:6px; overflow:auto; padding:5px; margin-bottom:16px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.025); }
+.maintenance-tabs button { flex:0 0 auto; min-height:36px; padding:0 15px; border:0; border-radius:999px; color:var(--text-muted); background:transparent; font-size:.68rem; font-weight:800; }
+.maintenance-tabs button.active { color:#111; background:var(--gold); }
+.maintenance-overview-grid,.maintenance-cost-grid { display:grid; grid-template-columns:1.25fr .95fr; gap:14px; margin-bottom:14px; }
+.maintenance-priority-list { display:grid; gap:9px; }
+.maintenance-job-card { width:100%; padding:15px; text-align:left; border:1px solid var(--line); border-radius:15px; color:var(--text); background:rgba(255,255,255,.025); }
+.maintenance-job-card:hover { border-color:var(--gold); background:var(--gold-wash); }
+.maintenance-job-card.overdue { border-color:rgba(255,111,114,.38); }
+.maintenance-job-card > strong { display:block; margin:10px 0 4px; font-size:.8rem; }
+.maintenance-job-card > small { display:block; color:var(--text-muted); font-size:.65rem; }
+.maintenance-card-top,.maintenance-card-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.maintenance-job-number { color:var(--gold); font-size:.62rem; font-weight:850; letter-spacing:.05em; }
+.maintenance-card-meta { margin-top:12px; color:var(--text-muted); font-size:.62rem; }
+.maintenance-card-meta b { color:var(--text); }
+.priority-chip { display:inline-flex; min-height:24px; align-items:center; padding:0 8px; border-radius:999px; border:1px solid var(--line-strong); color:var(--text-muted); font-size:.58rem; text-transform:uppercase; letter-spacing:.06em; font-weight:850; }
+.priority-chip.urgent { color:#fff; border-color:rgba(255,111,114,.5); background:rgba(255,111,114,.18); }
+.priority-chip.high { color:#161006; border-color:var(--warning); background:var(--warning); }
+.priority-chip.normal { color:var(--text); }
+.priority-chip.low { opacity:.72; }
+.status-chip.reported,.status-chip.reviewed,.status-chip.reopened { color:var(--text); background:rgba(255,255,255,.08); }
+.status-chip.scheduled,.status-chip.dispatched { color:#111; background:var(--gold); border-color:var(--gold); }
+.status-chip.in_progress { color:#07120d; background:var(--success); border-color:var(--success); }
+.status-chip.waiting_parts { color:#171006; background:var(--warning); border-color:var(--warning); }
+.status-chip.verified,.status-chip.closed { color:var(--text-muted); background:rgba(255,255,255,.045); }
+.maintenance-cost-summary { display:grid; gap:18px; }
+.maintenance-cost-lead span { display:block; color:var(--text-muted); font-size:.67rem; text-transform:uppercase; letter-spacing:.08em; }
+.maintenance-cost-lead strong { display:block; margin:6px 0; font-size:2rem; letter-spacing:-.05em; }
+.maintenance-cost-lead small { color:var(--text-muted); }
+.maintenance-cost-bars { display:grid; gap:10px; }
+.maintenance-cost-bars button { display:grid; grid-template-columns:minmax(120px,1fr) minmax(90px,1.4fr) auto; gap:12px; align-items:center; border:0; color:var(--text); background:transparent; text-align:left; }
+.maintenance-cost-bars button span { font-size:.69rem; }
+.maintenance-cost-bars button i,.cost-ranking-list i { height:5px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+.maintenance-cost-bars button i b,.cost-ranking-list i b { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--gold-strong),var(--gold)); }
+.maintenance-cost-bars button strong { font-size:.68rem; }
+.maintenance-recent-panel { margin-bottom:14px; }
+.maintenance-card-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.maintenance-table-panel,.maintenance-schedule-panel { margin-bottom:14px; }
+.maintenance-table td small { margin-top:4px; }
+.maintenance-row-overdue { background:rgba(255,111,114,.045); }
+.maintenance-schedule-list { display:grid; gap:13px; }
+.maintenance-schedule-day { border:1px solid var(--line); border-radius:15px; overflow:hidden; }
+.maintenance-schedule-day > header { display:flex; justify-content:space-between; gap:12px; padding:13px 15px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.025); }
+.maintenance-schedule-day > header strong { font-size:.75rem; }
+.maintenance-schedule-day > header span { color:var(--text-muted); font-size:.65rem; }
+.maintenance-schedule-day button { width:100%; display:grid; grid-template-columns:70px 1fr auto; gap:14px; align-items:center; padding:13px 15px; border:0; border-bottom:1px solid var(--line); color:var(--text); background:transparent; text-align:left; }
+.maintenance-schedule-day button:last-child { border-bottom:0; }
+.maintenance-schedule-day button:hover { background:var(--gold-wash); }
+.maintenance-schedule-day time { color:var(--gold); font-size:.7rem; font-weight:850; }
+.maintenance-schedule-day button span:nth-child(2) strong,.maintenance-schedule-day button span:nth-child(2) small { display:block; }
+.maintenance-schedule-day button span:nth-child(2) strong { font-size:.73rem; }
+.maintenance-schedule-day button span:nth-child(2) small { margin-top:4px; color:var(--text-muted); font-size:.63rem; }
+.cost-ranking-list { display:grid; gap:7px; }
+.cost-ranking-list button,.cost-ranking-list > div { display:grid; grid-template-columns:34px minmax(140px,1fr) minmax(100px,1.4fr) auto; gap:12px; align-items:center; padding:10px 8px; border:0; border-radius:12px; color:var(--text); background:transparent; text-align:left; }
+.cost-ranking-list button:hover { background:var(--gold-wash); }
+.cost-ranking-list span:nth-child(2) strong,.cost-ranking-list span:nth-child(2) small { display:block; }
+.cost-ranking-list span:nth-child(2) strong { font-size:.71rem; }
+.cost-ranking-list span:nth-child(2) small { margin-top:3px; color:var(--text-muted); font-size:.61rem; }
+.cost-ranking-list > button > strong,.cost-ranking-list > div > strong { font-size:.69rem; }
+.maintenance-guidance { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+.maintenance-guidance div { padding:15px 17px; border:1px solid var(--line); border-radius:15px; background:rgba(255,255,255,.02); }
+.maintenance-guidance strong,.maintenance-guidance span { display:block; }
+.maintenance-guidance strong { margin-bottom:5px; font-size:.72rem; }
+.maintenance-guidance span { color:var(--text-muted); font-size:.65rem; line-height:1.55; }
+.maintenance-detail-head { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:18px; }
+.maintenance-detail-head h2 { margin:13px 0 7px; font-size:1.45rem; }
+.maintenance-detail-head p { max-width:700px; margin:0; color:var(--text-muted); line-height:1.6; }
+.maintenance-detail-head .priority-chip { margin-left:7px; }
+.maintenance-detail-cost { min-width:180px; padding:16px; border:1px solid var(--line); border-radius:16px; background:var(--gold-wash); }
+.maintenance-detail-cost span,.maintenance-detail-cost small,.maintenance-detail-cost strong { display:block; }
+.maintenance-detail-cost span { color:var(--text-muted); font-size:.62rem; text-transform:uppercase; }
+.maintenance-detail-cost strong { margin:6px 0; font-size:1.45rem; }
+.maintenance-detail-cost small { color:var(--text-muted); }
+.maintenance-cost-breakdown { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin:15px 0; }
+.maintenance-cost-breakdown div { padding:13px; border:1px solid var(--line); border-radius:13px; background:rgba(255,255,255,.02); }
+.maintenance-cost-breakdown span,.maintenance-cost-breakdown strong { display:block; }
+.maintenance-cost-breakdown span { margin-bottom:5px; color:var(--text-muted); font-size:.6rem; text-transform:uppercase; }
+.maintenance-cost-breakdown strong { font-size:.73rem; }
+.maintenance-form { align-items:start; }
+
+.dashboard-maintenance-grid { display:grid; grid-template-columns:1.15fr .9fr .9fr; gap:13px; }
+.dashboard-maintenance-summary { display:grid; grid-template-columns:repeat(2,1fr); }
+.dashboard-maintenance-summary > div { min-height:112px; padding:18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+.dashboard-maintenance-summary > div:nth-child(2n) { border-right:0; }
+.dashboard-maintenance-summary > div:nth-last-child(-n+2) { border-bottom:0; }
+.dashboard-maintenance-summary span,.dashboard-maintenance-summary strong,.dashboard-maintenance-summary small { display:block; }
+.dashboard-maintenance-summary span { color:var(--text-muted); font-size:.62rem; text-transform:uppercase; letter-spacing:.08em; }
+.dashboard-maintenance-summary strong { margin:7px 0; font-size:1.45rem; }
+.dashboard-maintenance-summary small { color:var(--text-muted); font-size:.62rem; }
+.dashboard-maintenance-properties header,.dashboard-maintenance-urgent header { padding:16px 17px; border-bottom:1px solid var(--line); }
+.dashboard-maintenance-properties header span,.dashboard-maintenance-urgent header span { display:block; color:var(--text-faint); font-size:.58rem; letter-spacing:.1em; }
+.dashboard-maintenance-properties header strong,.dashboard-maintenance-urgent header strong { display:block; margin-top:5px; font-size:.74rem; }
+.dashboard-maintenance-properties > div,.dashboard-maintenance-urgent > div { padding:8px; }
+.dashboard-maintenance-properties button { width:100%; display:grid; grid-template-columns:28px 1fr auto; gap:9px; align-items:center; padding:10px; border:0; border-radius:10px; color:var(--text); background:transparent; text-align:left; }
+.dashboard-maintenance-properties button:hover,.dashboard-maintenance-urgent button:hover { background:var(--gold-wash); }
+.dashboard-maintenance-properties button span { color:var(--text-faint); font-size:.58rem; }
+.dashboard-maintenance-properties button strong { font-size:.68rem; }
+.dashboard-maintenance-properties button b { font-size:.65rem; }
+.dashboard-maintenance-urgent button { width:100%; display:grid; grid-template-columns:10px 1fr; gap:8px 10px; align-items:center; padding:10px; border:0; border-radius:10px; color:var(--text); background:transparent; text-align:left; }
+.dashboard-maintenance-urgent button strong { font-size:.68rem; }
+.dashboard-maintenance-urgent button small { grid-column:2; color:var(--text-muted); font-size:.6rem; }
+.priority-dot { width:8px; height:8px; border-radius:50%; background:var(--warning); }
+.priority-dot.urgent { background:var(--danger); box-shadow:0 0 0 4px rgba(255,111,114,.1); }
+
+html[data-theme="day"] .maintenance-kpi { background:#fff; }
+html[data-theme="day"] .maintenance-job-card,html[data-theme="day"] .maintenance-guidance div,html[data-theme="day"] .maintenance-schedule-day,html[data-theme="day"] .maintenance-cost-breakdown div { background:#fff; }
+html[data-theme="day"] .maintenance-kpi.cost { background:var(--gold); }
+
+@media (max-width:1150px) {
+  .maintenance-kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .maintenance-overview-grid,.maintenance-cost-grid,.dashboard-maintenance-grid { grid-template-columns:1fr; }
+  .maintenance-card-grid { grid-template-columns:1fr; }
+}
+@media (max-width:720px) {
+  .maintenance-kpi-grid,.maintenance-guidance { grid-template-columns:1fr; }
+  .maintenance-detail-head { flex-direction:column; }
+  .maintenance-detail-cost { width:100%; }
+  .maintenance-cost-breakdown { grid-template-columns:repeat(2,1fr); }
+  .maintenance-schedule-day button { grid-template-columns:55px 1fr; }
+  .maintenance-schedule-day button .status-chip { grid-column:2; justify-self:start; }
+}
+
+.modal-footer { flex-wrap:wrap; }
