@@ -60,7 +60,7 @@ textarea { min-height:94px; resize:vertical; }
 .status-chip.occupied,.status-chip.active,.status-chip.paid { color:#07120d; background:var(--success); border-color:var(--success); }
 .status-chip.booked,.status-chip.upcoming { color:#171006; background:var(--warning); border-color:var(--warning); }
 .status-chip.vacant,.status-chip.draft { color:var(--text); background:#39393f; border-color:#4b4b52; }
-.status-chip.maintenance,.status-chip.expiring { color:var(--text); background:repeating-linear-gradient(135deg,#222226 0,#222226 5px,#34343a 5px,#34343a 10px); }
+.status-chip.maintenance,.status-chip.renovation,.status-chip.inspection,.status-chip.expiring { color:var(--text); background:repeating-linear-gradient(135deg,#222226 0,#222226 5px,#34343a 5px,#34343a 10px); }
 .status-chip.expired,.status-chip.overdue,.status-chip.terminated { color:#fff; border-color:rgba(255,111,114,.45); background:rgba(255,111,114,.14); }
 .status-chip.completed { color:var(--text-muted); background:var(--surface-muted); }
 .data-table-wrap { width:100%; overflow:auto; }
