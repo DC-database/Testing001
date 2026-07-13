@@ -6,7 +6,7 @@
 
   let propertySearch = "";
   let unitStatusFilter = "all";
-  const UNIT_STATUS_OPTIONS = ["all", "occupied", "booked", "vacant", "maintenance"];
+  const UNIT_STATUS_OPTIONS = ["all", "occupied", "booked", "vacant", "inspection", "work"];
 
 
   const PROPERTY_PLACEHOLDERS = {
@@ -62,9 +62,19 @@
   }
 
   function statusLabel(status) {
-    if (status === "maintenance") return "Maintenance";
     if (status === "all") return "All Units";
+    if (status === "vacant") return "Ready";
+    if (status === "inspection") return "Inspection";
+    if (status === "work") return "Maintenance / Renovation";
+    if (status === "maintenance") return "Under Maintenance";
+    if (status === "renovation") return "Under Renovation";
     return u.titleCase(status);
+  }
+
+  function statusMatches(unit, filter) {
+    if (filter === "all") return true;
+    if (filter === "work") return ["maintenance", "renovation"].includes(unit.status);
+    return unit.status === filter;
   }
 
   async function render(view, params = {}) {
@@ -86,7 +96,7 @@
     const propertyMap = new Map(properties.map((property) => [property.id, property]));
     const tenantMap = new Map(tenants.map((tenant) => [tenant.id, tenant]));
     const contractMap = new Map(contracts.map((contract) => [contract.id, contract]));
-    const statusCount = (status) => status === "all" ? units.length : units.filter((unit) => unit.status === status).length;
+    const statusCount = (status) => units.filter((unit) => statusMatches(unit, status)).length;
 
     view.innerHTML = `
       <section class="page-heading property-page-heading">
@@ -127,11 +137,12 @@
       </article>`;
 
     const statusMessages = {
-      all: "All Units includes occupied, booked, vacant, maintenance and unavailable records.",
-      occupied: "Occupied shows only units with a current active tenant and active tenancy.",
-      booked: "Booked shows only units reserved for an incoming tenant or upcoming contract and not yet occupied.",
-      vacant: "Vacant shows only units currently available for leasing and without an active tenant.",
-      maintenance: "Maintenance shows only units temporarily unavailable because major work prevents normal occupancy. Minor repair tickets should remain under the unit's normal status."
+      all: "All Units includes every current unit status.",
+      occupied: "Occupied shows units with an active tenant and tenancy.",
+      booked: "Booked shows units reserved for an incoming tenant or upcoming contract.",
+      vacant: "Ready shows empty units that passed inspection and can accept another tenant.",
+      inspection: "Inspection shows units waiting for the move-out or turnover check before they can be offered again.",
+      work: "Maintenance / Renovation shows empty units unavailable while major work is being completed. Normal tenant repair requests remain under Occupied."
     };
 
     const unitMatchesTerm = (unit, term) => {
@@ -157,7 +168,7 @@
       const term = u.normalize(view.querySelector("#portfolio-search").value);
       const status = view.querySelector("#portfolio-unit-status-filter button.active")?.dataset.status || "all";
       const matchingUnits = units
-        .filter((unit) => status === "all" || unit.status === status)
+        .filter((unit) => statusMatches(unit, status))
         .filter((unit) => unitMatchesTerm(unit, term))
         .sort((a, b) => {
           const propertyCompare = String(propertyMap.get(a.propertyId)?.name || "").localeCompare(String(propertyMap.get(b.propertyId)?.name || ""));
@@ -244,8 +255,8 @@
         <div class="property-status-grid">
           <div><strong>${u.number(property.occupied)}</strong><span>Occupied</span></div>
           <div><strong>${u.number(property.booked)}</strong><span>Booked</span></div>
-          <div><strong>${u.number(property.vacant)}</strong><span>Vacant</span></div>
-          <div><strong>${u.number(property.maintenance)}</strong><span>Maintenance</span></div>
+          <div><strong>${u.number(property.vacant)}</strong><span>Ready</span></div>
+          <div><strong>${u.number(property.maintenance)}</strong><span>Work</span></div>
         </div>
         <div class="property-card-finance">
           <div><strong>${u.money(property.monthlyRevenue)}</strong><span>Monthly revenue</span></div>
@@ -265,7 +276,7 @@
     const stats = root.data.summarizeProperty(property, allUnits);
     const units = allUnits.filter((unit) => unit.propertyId === propertyId).sort((a,b) => String(a.unitNumber).localeCompare(String(b.unitNumber), undefined, { numeric: true }));
     unitStatusFilter = UNIT_STATUS_OPTIONS.includes(params.status) ? params.status : (UNIT_STATUS_OPTIONS.includes(unitStatusFilter) ? unitStatusFilter : "all");
-    const statusCount = (status) => status === "all" ? units.length : units.filter((unit) => unit.status === status).length;
+    const statusCount = (status) => units.filter((unit) => statusMatches(unit, status)).length;
 
     view.innerHTML = `
       <div class="breadcrumb"><button data-back>Properties</button><span>/</span><span>${u.escapeHTML(property.name)}</span></div>
@@ -280,7 +291,7 @@
           <div class="property-hero-metrics">
             <div class="property-hero-metric"><span>Total units</span><strong>${stats.totalUnits}</strong></div>
             <div class="property-hero-metric"><span>Occupied</span><strong>${stats.occupied}</strong></div>
-            <div class="property-hero-metric"><span>Booked / Vacant</span><strong>${stats.booked} / ${stats.vacant}</strong></div>
+            <div class="property-hero-metric"><span>Booked / Ready</span><strong>${stats.booked} / ${stats.vacant}</strong></div>
             <div class="property-hero-metric"><span>Occupancy</span><strong>${u.percent(stats.occupancyRate)}</strong></div>
             <div class="property-hero-metric"><span>Monthly income</span><strong>${u.money(stats.monthlyRevenue)}</strong></div>
           </div>
@@ -305,17 +316,18 @@
 
     const statusMessages = {
       all: "Showing every unit in this property.",
-      occupied: "Showing only occupied units in this property.",
-      booked: "Showing only booked units reserved for an incoming tenant.",
-      vacant: "Showing only vacant units currently available for leasing.",
-      maintenance: "Showing only units unavailable because of major maintenance work."
+      occupied: "Showing occupied units with an active tenancy.",
+      booked: "Showing units reserved for an incoming tenant.",
+      vacant: "Showing units ready for another tenant.",
+      inspection: "Showing units waiting for turnover inspection.",
+      work: "Showing units unavailable because of major maintenance or renovation."
     };
 
     const drawUnits = () => {
       const term = u.normalize(view.querySelector("#unit-search").value);
       const status = view.querySelector("#unit-status-filter button.active")?.dataset.status || "all";
       const filtered = units.filter((unit) => {
-        const matchStatus = status === "all" || unit.status === status;
+        const matchStatus = statusMatches(unit, status);
         const matchText = [unit.unitNumber, unit.aptType, unit.specifics, unit.status, unit.kahramaa?.accountNumber, unit.kahramaa?.electricityNumber, unit.kahramaa?.waterNumber].some((value) => u.normalize(value).includes(term));
         return matchStatus && matchText;
       });
@@ -418,7 +430,7 @@
         <label><span>Property</span><select name="propertyId" required>${properties.map((property) => `<option value="${property.id}" ${(unit.propertyId === property.id) ? "selected" : ""}>${u.escapeHTML(property.name)}</option>`).join("")}</select></label>
         <label><span>Unit No.</span><input name="unitNumber" required value="${u.escapeHTML(unit.unitNumber || "")}"></label>
         <label><span>Apartment / Unit Type</span><input name="aptType" value="${u.escapeHTML(unit.aptType || "")}" placeholder="2BHK"></label>
-        <label><span>Status</span><select name="status">${["vacant","booked","occupied","maintenance","unavailable"].map((status) => `<option value="${status}" ${unit.status === status ? "selected" : ""}>${u.titleCase(status)}</option>`).join("")}</select></label>
+        <label><span>Status</span><select name="status">${[["vacant","Ready for Tenant"],["booked","Booked"],["occupied","Occupied"],["inspection","Inspection Pending"],["maintenance","Under Maintenance"],["renovation","Under Renovation"],["unavailable","Unavailable"]].map(([status,label]) => `<option value="${status}" ${unit.status === status ? "selected" : ""}>${label}</option>`).join("")}</select></label>
         <label class="span-2"><span>Specifics</span><input name="specifics" value="${u.escapeHTML(unit.specifics || "")}" placeholder="Sea view, front corner"></label>
         <label><span>Floor</span><input name="floor" value="${u.escapeHTML(unit.floor ?? "")}"></label>
         <label><span>Rent Value (QAR / month)</span><input name="rentValue" type="number" min="0" value="${u.escapeHTML(unit.rentValue ?? 0)}"></label>

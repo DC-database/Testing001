@@ -12,6 +12,7 @@
     { id: "tenants", icon: "T", title: "Tenant Register", description: "Current, upcoming and previous tenant directory linked to units." },
     { id: "kahramaa", icon: "K", title: "Kahramaa Register", description: "Electricity, water, account, premise and meter details by unit." },
     { id: "receipts", icon: "R", title: "Receipt Register", description: "Paid and overdue payment records with receipt and reference numbers." },
+    { id: "maintenance", icon: "M", title: "Maintenance Cost & Jobs", description: "Portfolio maintenance workload, property costs, categories and completion performance." },
     { id: "audit", icon: "A", title: "Activity Audit", description: "Chronological system activity showing who changed each record." }
   ];
 
@@ -35,11 +36,11 @@
   }
 
   async function baseMaps() {
-    const [properties, units, tenants, contracts, payments] = await Promise.all([
-      root.data.getProperties(true), root.data.getUnits(true), root.data.getTenants(true), root.data.getContracts(true), root.data.getPayments()
+    const [properties, units, tenants, contracts, payments, maintenanceJobs] = await Promise.all([
+      root.data.getProperties(true), root.data.getUnits(true), root.data.getTenants(true), root.data.getContracts(true), root.data.getPayments(), root.data.getMaintenanceJobs(true)
     ]);
     return {
-      properties, units, tenants, contracts, payments,
+      properties, units, tenants, contracts, payments, maintenanceJobs,
       propertyMap: new Map(properties.map((r) => [r.id, r])),
       unitMap: new Map(units.map((r) => [r.id, r])),
       tenantMap: new Map(tenants.map((r) => [r.id, r])),
@@ -106,6 +107,20 @@
         return `<tr><td>${u.escapeHTML(payment.receiptNumber || "—")}</td><td>${u.escapeHTML(tenant?.name || "Tenant")}</td><td>${u.escapeHTML(property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</td><td>${u.date(payment.dueDate)}</td><td>${u.money(payment.amount)}</td><td>${u.escapeHTML(payment.method || "—")}</td><td>${u.titleCase(payment.status)}</td></tr>`;
       }).join("");
       return { title: "Receipt Register", html: `${reportHeader("Receipt Register")}<table><thead><tr><th>Receipt</th><th>Tenant</th><th>Property / Unit</th><th>Due</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>${footer}` };
+    }
+
+    if (reportId === "maintenance") {
+      const snapshot = await root.data.getMaintenanceSnapshot();
+      const rows = maps.maintenanceJobs.map((job) => {
+        const property = maps.propertyMap.get(job.propertyId);
+        const unit = maps.unitMap.get(job.unitId);
+        const performance = job.actualCompletionDate && job.expectedCompletionDate
+          ? (() => { const days = u.daysBetween(job.actualCompletionDate, job.expectedCompletionDate); return days > 0 ? `${days} day(s) early` : days < 0 ? `${Math.abs(days)} day(s) late` : "On time"; })()
+          : "—";
+        return `<tr><td>${u.escapeHTML(job.jobNumber)}</td><td>${u.escapeHTML(property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</td><td>${u.escapeHTML(job.issueCategory)}</td><td>${u.titleCase(job.requestType)}</td><td>${u.titleCase(job.status)}</td><td>${u.escapeHTML(job.assignedTo || "Unassigned")}</td><td>${u.money(job.actualCost || job.estimatedCost)}</td><td>${u.escapeHTML(performance)}</td></tr>`;
+      }).join("");
+      const propertyRows = snapshot.costsByProperty.map((row) => `<tr><td>${u.escapeHTML(row.propertyName)}</td><td>${u.money(row.cost)}</td></tr>`).join("");
+      return { title: "Maintenance Cost & Jobs Report", html: `${reportHeader("Maintenance Cost & Jobs Report")}<div class="grid"><div class="item"><span>Open Jobs</span><strong>${snapshot.openCount}</strong></div><div class="item"><span>Overdue Jobs</span><strong>${snapshot.overdueCount}</strong></div><div class="item"><span>Cost This Month</span><strong>${u.money(snapshot.costThisMonth)}</strong></div><div class="item"><span>Cost This Year</span><strong>${u.money(snapshot.costThisYear)}</strong></div></div><h3>Cost by Property</h3><table><thead><tr><th>Property</th><th>Completed Maintenance Cost</th></tr></thead><tbody>${propertyRows}</tbody></table><h3>Maintenance Register</h3><table><thead><tr><th>Job</th><th>Property / Unit</th><th>Category</th><th>Type</th><th>Status</th><th>Assigned</th><th>Cost</th><th>Performance</th></tr></thead><tbody>${rows}</tbody></table>${footer}` };
     }
 
     if (reportId === "audit") {

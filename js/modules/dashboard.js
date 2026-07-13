@@ -6,7 +6,7 @@
 
   function statusBar(property, showCount = false) {
     const total = property.totalUnits || 1;
-    return `<div class="premium-stacked-bar" title="${property.occupied} occupied · ${property.booked} booked · ${property.vacant} vacant · ${property.maintenance} maintenance">
+    return `<div class="premium-stacked-bar" title="${property.occupied} occupied · ${property.booked} booked · ${property.vacant} ready · ${property.maintenance} maintenance / renovation">
       <span class="occupied" style="width:${property.occupied / total * 100}%"></span>
       <span class="booked" style="width:${property.booked / total * 100}%"></span>
       <span class="vacant" style="width:${property.vacant / total * 100}%"></span>
@@ -43,14 +43,17 @@
     const propertiesByOccupancy = [...snapshot.properties].sort((a, b) => a.occupancyRate - b.occupancyRate);
     const maxRevenue = Math.max(...propertiesByRevenue.map((item) => item.annualRevenue), 1);
     const maxExpiry = Math.max(...snapshot.leaseBuckets.map((item) => item.count), 1);
-    const statusTotal = snapshot.occupied + snapshot.booked + snapshot.vacant + snapshot.maintenance || 1;
+    const statusTotal = snapshot.totalUnits || 1;
     const occupiedEnd = snapshot.occupied / statusTotal * 360;
     const bookedEnd = occupiedEnd + snapshot.booked / statusTotal * 360;
     const vacantEnd = bookedEnd + snapshot.vacant / statusTotal * 360;
+    const maintenanceDisplay = Math.max(0, snapshot.totalUnits - snapshot.occupied - snapshot.booked - snapshot.vacant);
     const highestRevenue = propertiesByRevenue[0];
     const lowestOccupancy = propertiesByOccupancy[0];
     const integrityGood = snapshot.integrityIssues.length === 0;
     document.getElementById("nav-action-count").textContent = snapshot.actions.length;
+    const maintenanceNavCount = document.getElementById("nav-maintenance-count");
+    if (maintenanceNavCount) maintenanceNavCount.textContent = snapshot.maintenanceSummary.openCount;
 
     view.innerHTML = `
       <section class="dashboard-hero">
@@ -69,6 +72,7 @@
         <button class="dashboard-quick-action" data-dashboard-quick="unit"><i>＋</i><span><strong>Add unit</strong><small>Choose property in the form</small></span></button>
         <button class="dashboard-quick-action" data-dashboard-quick="tenant"><i>T</i><span><strong>New tenant</strong><small>Assign tenant and contract</small></span></button>
         <button class="dashboard-quick-action" data-dashboard-quick="payment"><i>R</i><span><strong>Record payment</strong><small>Issue a receipt immediately</small></span></button>
+        <button class="dashboard-quick-action" data-dashboard-quick="maintenance"><i>M</i><span><strong>Maintenance</strong><small>Create and schedule a work order</small></span></button>
         <button class="dashboard-quick-action" data-dashboard-quick="import"><i>⇧</i><span><strong>Import records</strong><small>Bulk upload portfolio CSV</small></span></button>
       </section>` : ""}
 
@@ -76,7 +80,7 @@
         <article class="portfolio-kpi clickable" data-kpi="units"><span>Total units</span><strong>${u.number(snapshot.totalUnits)}</strong><small>${u.number(snapshot.totalProperties)} properties</small></article>
         <article class="portfolio-kpi occupied clickable" data-kpi="occupied"><span>Occupied</span><strong>${u.number(snapshot.occupied)}</strong><small>${u.percent(snapshot.occupancyRate)} portfolio rate</small></article>
         <article class="portfolio-kpi booked clickable" data-kpi="booked"><span>Booked</span><strong>${u.number(snapshot.booked)}</strong><small>Future occupancy pipeline</small></article>
-        <article class="portfolio-kpi vacant clickable" data-kpi="vacant"><span>Vacant</span><strong>${u.number(snapshot.vacant)}</strong><small>${u.money(snapshot.vacancyLoss)} potential / month</small></article>
+        <article class="portfolio-kpi vacant clickable" data-kpi="vacant"><span>Ready units</span><strong>${u.number(snapshot.vacant)}</strong><small>${u.money(snapshot.vacancyLoss)} potential / month</small></article>
         <article class="portfolio-kpi revenue clickable" data-kpi="monthly"><span>Annual revenue</span><strong>${u.compact(snapshot.annualRevenue)}</strong><small>${u.money(snapshot.monthlyRevenue)} active monthly</small></article>
       </section>
 
@@ -86,6 +90,26 @@
         <div><span>Past due leases</span><strong>${u.number(snapshot.pastDue)}</strong></div>
         <div><span>Potential monthly</span><strong>${u.money(snapshot.potentialRevenue)}</strong></div>
         <div class="${integrityGood ? "integrity-ok" : "integrity-bad"}"><span>Data integrity</span><strong>${integrityGood ? "Verified" : `${snapshot.integrityIssues.length} issue(s)`}</strong></div>
+      </section>
+
+      <section class="dashboard-section dashboard-maintenance-section">
+        <header class="dashboard-section-header"><div><span>MAINTENANCE OPERATIONS</span><h2>Cost and workload without the clutter.</h2></div><button class="text-button" data-open-maintenance>Open Maintenance →</button></header>
+        <div class="dashboard-maintenance-grid">
+          <article class="premium-panel dashboard-maintenance-summary">
+            <div><span>Open jobs</span><strong>${u.number(snapshot.maintenanceSummary.openCount)}</strong><small>${u.number(snapshot.maintenanceSummary.overdueCount)} overdue</small></div>
+            <div><span>Due today</span><strong>${u.number(snapshot.maintenanceSummary.dueTodayCount)}</strong><small>${u.number(snapshot.maintenanceSummary.waitingPartsCount)} waiting for parts</small></div>
+            <div><span>Cost this month</span><strong>${u.money(snapshot.maintenanceSummary.costThisMonth)}</strong><small>Completed work</small></div>
+            <div><span>Cost this year</span><strong>${u.money(snapshot.maintenanceSummary.costThisYear)}</strong><small>Whole portfolio</small></div>
+          </article>
+          <article class="premium-panel dashboard-maintenance-properties">
+            <header><div><span>HIGHEST PROPERTY COSTS</span><strong>Year to date</strong></div></header>
+            <div>${snapshot.maintenanceSummary.costsByProperty.slice(0, 4).map((row, index) => `<button data-property-id="${row.propertyId}"><span>${String(index + 1).padStart(2, "0")}</span><strong>${u.escapeHTML(row.propertyName)}</strong><b>${u.money(row.cost)}</b></button>`).join("") || `<div class="muted">No completed costs recorded.</div>`}</div>
+          </article>
+          <article class="premium-panel dashboard-maintenance-urgent">
+            <header><div><span>ACTIVE PRIORITIES</span><strong>Urgent and high priority</strong></div></header>
+            <div>${snapshot.maintenanceSummary.urgent.slice(0, 4).map((job) => { const unit = snapshot.maintenanceSummary.unitMap.get(job.unitId); const property = snapshot.maintenanceSummary.propertyMap.get(job.propertyId); return `<button data-maintenance-id="${job.id}"><span class="priority-dot ${job.priority}"></span><strong>${u.escapeHTML(job.title)}</strong><small>${u.escapeHTML(property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</small></button>`; }).join("") || `<div class="muted">No urgent maintenance work.</div>`}</div>
+          </article>
+        </div>
       </section>
 
       <section class="dashboard-section">
@@ -101,7 +125,7 @@
 
       <section class="dashboard-visual-grid">
         <article class="premium-panel occupancy-panel">
-          <header class="premium-panel-header"><div><span>OCCUPANCY STATUS</span><h3>Occupancy by property</h3></div><div class="premium-legend"><i class="occupied"></i>Occupied<i class="booked"></i>Booked<i class="vacant"></i>Vacant<i class="maintenance"></i>Maintenance</div></header>
+          <header class="premium-panel-header"><div><span>OCCUPANCY STATUS</span><h3>Occupancy by property</h3></div><div class="premium-legend"><i class="occupied"></i>Occupied<i class="booked"></i>Booked<i class="vacant"></i>Ready<i class="maintenance"></i>Work / inspection</div></header>
           <div class="premium-panel-body occupancy-chart-list">
             ${propertiesByRevenue.map((property) => `<button class="occupancy-chart-row" data-property-id="${property.id}"><span class="chart-property"><b>${u.escapeHTML(property.name)}</b><small>${u.number(property.totalUnits)} units</small></span>${statusBar(property)}<strong>${u.percent(property.occupancyRate, 0)}</strong></button>`).join("")}
           </div>
@@ -114,8 +138,8 @@
             <div class="status-mix-list">
               <button data-kpi="occupied"><i class="occupied"></i><span>Occupied<small>${u.percent(snapshot.occupied / statusTotal * 100)}</small></span><b>${u.number(snapshot.occupied)}</b></button>
               <button data-kpi="booked"><i class="booked"></i><span>Booked<small>${u.percent(snapshot.booked / statusTotal * 100)}</small></span><b>${u.number(snapshot.booked)}</b></button>
-              <button data-kpi="vacant"><i class="vacant"></i><span>Vacant<small>${u.percent(snapshot.vacant / statusTotal * 100)}</small></span><b>${u.number(snapshot.vacant)}</b></button>
-              <button><i class="maintenance"></i><span>Maintenance<small>${u.percent(snapshot.maintenance / statusTotal * 100)}</small></span><b>${u.number(snapshot.maintenance)}</b></button>
+              <button data-kpi="vacant"><i class="vacant"></i><span>Ready<small>${u.percent(snapshot.vacant / statusTotal * 100)}</small></span><b>${u.number(snapshot.vacant)}</b></button>
+              <button><i class="maintenance"></i><span>Work / inspection<small>${u.percent(maintenanceDisplay / statusTotal * 100)}</small></span><b>${u.number(maintenanceDisplay)}</b></button>
             </div>
           </div>
         </article>
@@ -135,7 +159,7 @@
             <button data-property-id="${highestRevenue?.id || ""}"><span>Highest revenue property</span><strong>${u.escapeHTML(highestRevenue?.name || "—")}</strong><small>${u.money(highestRevenue?.monthlyRevenue || 0)} monthly</small></button>
             <button data-property-id="${lowestOccupancy?.id || ""}"><span>Lowest occupancy</span><strong>${u.escapeHTML(lowestOccupancy?.name || "—")}</strong><small>${u.percent(lowestOccupancy?.occupancyRate || 0)} occupancy</small></button>
             <button data-kpi="expiring"><span>Lease exposure</span><strong>${u.number(snapshot.expiring90)} expiring soon</strong><small>${u.number(snapshot.pastDue)} contract(s) already past due</small></button>
-            <button data-kpi="vacant"><span>Vacancy opportunity</span><strong>${u.money(snapshot.vacancyLoss)}</strong><small>Potential monthly revenue to recover</small></button>
+            <button data-kpi="vacant"><span>Ready-unit opportunity</span><strong>${u.money(snapshot.vacancyLoss)}</strong><small>Potential monthly revenue to recover</small></button>
           </div>
         </article>
       </section>
@@ -166,10 +190,13 @@
       if (action === "unit") root.modules.properties.openUnitForm();
       else if (action === "tenant") root.quickAdd.selectTenantUnit();
       else if (action === "payment") root.quickAdd.selectPaymentUnit();
+      else if (action === "maintenance") root.modules.maintenance.openJobForm();
       else if (action === "import") root.router.navigate("import");
     }));
     view.querySelectorAll("[data-route-properties]").forEach((el) => el.addEventListener("click", () => root.router.navigate("properties")));
     view.querySelector("[data-open-actions]")?.addEventListener("click", () => root.router.navigate("actions"));
+    view.querySelector("[data-open-maintenance]")?.addEventListener("click", () => root.router.navigate("maintenance"));
+    view.querySelectorAll("[data-maintenance-id]").forEach((el) => el.addEventListener("click", () => root.modules.maintenance.openJob(el.dataset.maintenanceId)));
     view.querySelectorAll("[data-property-id]").forEach((el) => el.addEventListener("click", () => {
       if (el.dataset.propertyId) root.router.navigate("properties", { propertyId: el.dataset.propertyId });
     }));

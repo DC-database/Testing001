@@ -11,6 +11,7 @@
     ["tenant", "Current Tenant"],
     ["contract", "Current Contract"],
     ["payments", "Payments & Receipts"],
+    ["maintenance", "Maintenance"],
     ["history", "History"]
   ];
 
@@ -127,6 +128,21 @@
       <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Receipt</th><th>Due Date</th><th>Paid Date</th><th>Amount</th><th>Method</th><th>Status</th><th></th></tr></thead><tbody>${payments.map((payment) => `<tr><td><div class="table-title">${u.escapeHTML(payment.receiptNumber || "Not issued")}</div></td><td>${u.date(payment.dueDate)}</td><td>${u.date(payment.paidDate)}</td><td>${u.money(payment.amount)}</td><td>${u.escapeHTML(payment.method || "—")}</td><td><span class="status-chip ${payment.status}">${u.titleCase(payment.status)}</span></td><td>${payment.receiptNumber ? `<button class="button button-secondary button-small" data-print-receipt="${payment.id}">Print</button>` : ""}</td></tr>`).join("") || `<tr><td colspan="7">${root.ui.emptyState("No payments", "Payment and receipt records will appear here.")}</td></tr>`}</tbody></table></div>`;
     }
 
+    if (tabId === "maintenance") {
+      const jobs = bundle.maintenanceJobs || [];
+      const openJobs = jobs.filter((job) => ["reported", "reviewed", "scheduled", "dispatched", "in_progress", "waiting_parts", "reopened"].includes(job.status));
+      const completedJobs = jobs.filter((job) => ["completed", "verified", "closed"].includes(job.status));
+      const totalCost = completedJobs.reduce((sum, job) => sum + Number(job.actualCost || job.estimatedCost || 0), 0);
+      return `<div class="page-heading" style="margin-bottom:16px"><div><h3 style="margin-bottom:5px">Unit maintenance</h3><p>Normal tenant repairs do not change an occupied unit's status. Turnover work controls when an empty unit becomes ready again.</p></div>${root.auth.can("create") ? `<div class="page-actions"><button class="button button-primary" data-add-maintenance>New maintenance job</button></div>` : ""}</div>
+        <div class="unit-summary-grid">
+          <div class="unit-summary-card"><span>Open Jobs</span><strong>${openJobs.length}</strong></div>
+          <div class="unit-summary-card"><span>Completed Jobs</span><strong>${completedJobs.length}</strong></div>
+          <div class="unit-summary-card"><span>Recorded Cost</span><strong>${u.money(totalCost)}</strong></div>
+          <div class="unit-summary-card"><span>Unit Availability</span><strong>${u.titleCase(unit.status)}</strong></div>
+        </div>
+        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Job</th><th>Work</th><th>Status</th><th>Assigned</th><th>Expected</th><th>Cost</th></tr></thead><tbody>${jobs.map((job) => `<tr class="clickable" data-maintenance-id="${job.id}"><td><div class="table-title">${u.escapeHTML(job.jobNumber)}</div><div class="table-subtitle">${u.titleCase(job.requestType)}</div></td><td><div class="table-title">${u.escapeHTML(job.title)}</div><div class="table-subtitle">${u.escapeHTML(job.issueCategory)}</div></td><td><span class="status-chip ${job.status}">${u.titleCase(job.status)}</span></td><td>${u.escapeHTML(job.assignedTo || "Unassigned")}</td><td>${u.date(job.expectedCompletionDate)}</td><td>${u.money(job.actualCost || job.estimatedCost)}</td></tr>`).join("") || `<tr><td colspan="6">${root.ui.emptyState("No maintenance history", "Create a job when the tenant reports an issue or when the unit needs turnover work.")}</td></tr>`}</tbody></table></div>`;
+    }
+
     if (tabId === "history") {
       const contractRows = contracts.map((item) => {
         const previousTenant = tenantMap.get(item.tenantId);
@@ -146,6 +162,14 @@
     instance.modal.querySelectorAll("[data-close-tenancy]").forEach((button) => button.addEventListener("click", () => closeTenancy(bundle, instance)));
     instance.modal.querySelector("[data-print-contract]")?.addEventListener("click", () => printContract(bundle));
     instance.modal.querySelector("[data-add-payment]")?.addEventListener("click", () => openPaymentForm(bundle, instance));
+    instance.modal.querySelector("[data-add-maintenance]")?.addEventListener("click", () => {
+      instance.close();
+      root.modules.maintenance.openJobForm({ unitId: bundle.unit.id, propertyId: bundle.property.id, returnToUnit: true });
+    });
+    instance.modal.querySelectorAll("[data-maintenance-id]").forEach((row) => row.addEventListener("click", () => {
+      instance.close();
+      root.modules.maintenance.openJob(row.dataset.maintenanceId);
+    }));
     instance.modal.querySelectorAll("[data-print-receipt]").forEach((button) => button.addEventListener("click", () => {
       const payment = bundle.payments.find((row) => row.id === button.dataset.printReceipt);
       printReceipt(bundle, payment);
@@ -208,7 +232,7 @@
     try {
       root.ui.showLoading("Closing tenancy…");
       await root.data.closeTenancy(bundle.unit.id);
-      root.ui.toast("Tenancy closed and unit marked vacant.", "success");
+      root.ui.toast("Tenancy closed. The unit is now waiting for move-out inspection.", "success");
       await open(bundle.unit.id, "history");
     } catch (error) { root.ui.toast(error.message, "error"); }
     finally { root.ui.hideLoading(); }
@@ -253,7 +277,7 @@
   async function assignTenant(unitId) {
     const bundle = await root.data.getUnitBundle(unitId);
     if (!bundle) return root.ui.toast("Unit record not found.", "error");
-    if (["maintenance", "unavailable"].includes(bundle.unit.status)) {
+    if (["inspection", "maintenance", "renovation", "unavailable"].includes(bundle.unit.status)) {
       return root.ui.toast("This unit is not currently available for a tenancy.", "error");
     }
     openTenantContractForm(bundle, null, { returnToUnit: false });
