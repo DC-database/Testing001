@@ -1,0 +1,35 @@
+:root {
+  --black: #030304;
+  --black-soft: #09090a;
+  --white: #ffffff;
+  --canvas: #050506;
+  --surface: #111113;
+  --surface-raised: #17171a;
+  --surface-muted: #1c1c20;
+  --surface-soft: #232328;
+  --line: rgba(255,255,255,.09);
+  --line-strong: rgba(255,255,255,.17);
+  --text: #f7f7f8;
+  --text-muted: #a0a0a7;
+  --text-faint: #707078;
+  --success: #5bd89d;
+  --warning: #f2b85a;
+  --danger: #ff6f72;
+  --info: #8eb7ff;
+  --status-occupied: #f4f4f5;
+  --status-booked: #8f8f98;
+  --status-vacant: #3f3f46;
+  --status-maintenance: #1f1f23;
+  --radius-xs: 9px;
+  --radius-sm: 13px;
+  --radius-md: 20px;
+  --radius-lg: 30px;
+  --radius-xl: 40px;
+  --shadow-soft: 0 18px 60px rgba(0,0,0,.26);
+  --shadow-modal: 0 42px 120px rgba(0,0,0,.65);
+  --sidebar-width: 274px;
+  --topbar-height: 88px;
+  --transition: 190ms cubic-bezier(.2,.75,.25,1);
+  --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+}

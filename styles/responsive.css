@@ -1,0 +1,106 @@
+@media (max-width: 1380px) {
+  .portfolio-kpi-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .portfolio-kpi.revenue { grid-column:span 2; }
+  .executive-action-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 1180px) {
+  .card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .property-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .property-hero-metrics { grid-template-columns:repeat(3,1fr); }
+  .report-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .dashboard-visual-grid,.revenue-grid { grid-template-columns:1fr; }
+  .status-mix-body { grid-template-columns:220px 1fr; justify-items:stretch; }
+  .lease-panel { grid-template-columns:1fr; }
+  .lease-risk-table-wrap { border-right:0; border-bottom:1px solid var(--line); }
+  .import-layout { grid-template-columns:1fr; }
+  .import-steps { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width: 980px) {
+  .executive-strip { grid-template-columns:repeat(3,1fr); }
+  .executive-strip > div:nth-child(3) { border-right:0; }
+  .executive-strip > div:nth-child(-n+3) { border-bottom:1px solid var(--line); }
+  .executive-action-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .guide-grid { grid-template-columns:repeat(2,1fr); }
+  .guide-grid > div:nth-child(3n) { border-right:1px solid var(--line); }
+  .guide-grid > div:nth-child(2n) { border-right:0; }
+  .guide-grid > div:nth-last-child(-n+3) { border-bottom:1px solid var(--line); }
+  .guide-grid > div:nth-last-child(-n+2) { border-bottom:0; }
+}
+@media (max-width: 880px) {
+  .login-screen { grid-template-columns:1fr; }
+  .login-visual { display:none; }
+  .login-brand-mobile { display:block; margin-bottom:32px; }
+  .login-brand-mobile img { width:210px; filter:brightness(0) invert(1); }
+  .login-panel { min-height:100vh; }
+  .app-shell { grid-template-columns:1fr; }
+  .sidebar { transform:translateX(-102%); transition:transform var(--transition); box-shadow:var(--shadow-modal); }
+  body.sidebar-open .sidebar { transform:translateX(0); }
+  .workspace { grid-column:1; }
+  .mobile-menu-button { display:inline-grid !important; }
+  .topbar { padding:0 18px; }
+  .app-view { padding:22px 18px 60px; }
+  .global-search-wrap { width:230px; }
+  .topbar-user > span:last-child,#presentation-button { display:none; }
+  .unit-summary-grid { grid-template-columns:repeat(2,1fr); }
+  .dashboard-hero { padding:30px; min-height:230px; }
+  .dashboard-hero-actions { display:none; }
+  .portfolio-kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .portfolio-kpi.revenue { grid-column:span 2; }
+}
+@media (max-width: 680px) {
+  .login-panel { padding:24px 17px; }
+  .login-card { padding:26px 21px; }
+  .login-card h1 { font-size:2rem; }
+  .demo-accounts { grid-template-columns:1fr; }
+  .demo-account { grid-template-columns:30px 1fr; min-height:auto; align-items:center; }
+  .topbar { height:76px; }
+  .topbar h2 { font-size:1rem; }
+  .topbar .eyebrow { display:none; }
+  .global-search-wrap { display:none; }
+  .app-view { min-height:calc(100vh - 76px); }
+  .page-heading,.dashboard-section-header { align-items:flex-start; flex-direction:column; }
+  .page-actions { justify-content:flex-start; }
+  .card-grid,.property-grid,.report-grid,.settings-grid { grid-template-columns:1fr; }
+  .stat-card { min-height:112px; }
+  .property-hero { padding:22px; }
+  .property-hero-top { flex-direction:column; }
+  .property-hero-metrics { grid-template-columns:repeat(2,1fr); }
+  .form-grid { grid-template-columns:1fr; }
+  .form-grid .span-2 { grid-column:auto; }
+  .detail-list { grid-template-columns:1fr; }
+  .detail-item:nth-child(odd) { border-right:0; }
+  .modal-root { padding:8px; }
+  .modal { max-height:calc(100vh - 16px); border-radius:19px; }
+  .unit-summary-grid { grid-template-columns:1fr; }
+  .dashboard-hero { min-height:210px; padding:26px 22px; border-radius:27px; }
+  .dashboard-hero h1 { font-size:3rem; }
+  .portfolio-kpi-grid { grid-template-columns:1fr 1fr; }
+  .portfolio-kpi { min-height:125px; padding:17px; }
+  .portfolio-kpi.revenue { grid-column:1/-1; }
+  .portfolio-kpi strong { font-size:2.35rem; }
+  .executive-strip { grid-template-columns:1fr 1fr; }
+  .executive-strip > div { border-right:1px solid var(--line) !important; border-bottom:1px solid var(--line); }
+  .executive-strip > div:nth-child(2n) { border-right:0 !important; }
+  .executive-strip > div:last-child { grid-column:1/-1; border-bottom:0; border-right:0 !important; }
+  .occupancy-chart-row { grid-template-columns:125px minmax(110px,1fr) 42px; gap:8px; }
+  .status-mix-body { grid-template-columns:1fr; }
+  .revenue-rank-row { grid-template-columns:25px 125px minmax(85px,1fr) 48px; gap:7px; }
+  .lease-panel { display:block; }
+  .premium-expiry-chart { min-width:700px; }
+  .lease-panel { overflow:auto; }
+  .executive-action-grid { grid-template-columns:1fr; }
+  .import-steps { grid-template-columns:1fr; }
+  .import-summary { align-items:flex-start; flex-direction:column; }
+  .import-summary-metrics { width:100%; justify-content:space-between; }
+  .guide-grid { grid-template-columns:1fr; }
+  .guide-grid > div { border-right:0 !important; border-bottom:1px solid var(--line) !important; }
+  .guide-grid > div:last-child { border-bottom:0 !important; }
+}
+
+/* v0.3.2 quick tenant unit status picker */
+@media (max-width: 680px) {
+  .quick-status-segmented { grid-template-columns: repeat(2,minmax(0,1fr)); border-radius: 15px; }
+  .quick-picker-filters { grid-template-columns: 1fr; }
+  .quick-unit-row { grid-template-columns: 1fr; gap: 10px; }
+  .quick-unit-row > span:last-child { justify-content: space-between; }
+}
