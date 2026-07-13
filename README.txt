@@ -1,16 +1,32 @@
 59 REAL ESTATE · DEMO SYSTEM
-Version 0.4.0-demo
+Version 0.5.0-demo
 
-WHAT CHANGED IN 0.4.0
-- Rebuilt Properties & Units as premium image-led portfolio cards.
-- Added cinematic black-and-white placeholder photographs for all 11 properties.
-- Each card now shows total units, Occupied, Booked, Vacant, Maintenance, monthly revenue and occupancy rate.
-- Added a premium image-led property detail header.
-- Added Manage Photos so official property photographs can replace placeholders later.
-- Property photos are compressed and stored in IndexedDB during the local demo.
-- Kept the All Units, Occupied, Booked, Vacant and Maintenance filters beside the search field.
-- Kept the fast New Tenant unit picker with Vacant, Booked, Occupied and All Eligible tabs.
-- Login remains fixed in Night mode and every sign-in opens Night mode by default.
+WHAT CHANGED IN 0.5.0
+- Added a complete Maintenance operations module without crowding the main dashboard.
+- Added separate workflows for occupied-unit tenant requests and vacant-unit turnover preparation.
+- Added New Requests, Schedule, Active Jobs, Completed Jobs and Costs views.
+- Added dispatch date/time, expected completion, actual completion and early/on-time/late tracking.
+- Added assignment to an internal team member or approved contractor.
+- Added estimated and actual Materials, Labour, Contractor, Transport and Other costs.
+- Added owner, tenant, warranty, shared and not-covered cost responsibility.
+- Added annual maintenance cost by property and by issue category.
+- Added a concise CEO maintenance summary on the Executive Dashboard.
+- Added a Maintenance tab inside every unit folder.
+- Added maintenance jobs to global search, reports, backup and audit history.
+- Closing a tenancy now moves the unit to Inspection Pending and automatically creates a move-out inspection job.
+- Vacant-unit workflow is now: Inspection Pending → Under Maintenance / Renovation when needed → Ready for Tenant after verification.
+- Normal occupied-unit repairs do not change the unit from Occupied.
+
+MAINTENANCE WORKFLOW
+Reported → Reviewed → Scheduled → Dispatched → In Progress → Completed → Verified → Closed
+Waiting for Parts and Reopened are also supported.
+
+UNIT AVAILABILITY IS SEPARATE FROM JOB STATUS
+- Occupied: normal tenant repairs may remain open while the unit stays occupied.
+- Inspection Pending: tenant moved out and the turnover inspection is not finished.
+- Under Maintenance: empty unit needs repair before reletting.
+- Under Renovation: empty unit needs major work.
+- Ready for Tenant: inspection and required work are complete.
 
 CORE FEATURES
 - Premium responsive interface using black, white, warm grey and gold
@@ -18,10 +34,11 @@ CORE FEATURES
 - IndexedDB CRUD data provider; records remain in this browser
 - 11 seeded properties and 395 demo unit records
 - CEO executive dashboard and Action Center
+- Premium image-led property cards with replaceable local photos
 - Property and unit folder views
-- Unit, Kahramaa, tenant, contract, payment, receipt and history tabs
+- Unit, Kahramaa, tenant, contract, payment, receipt, maintenance and history tabs
 - Tenant replacement that preserves previous tenant and contract history
-- Printable contract, receipt and portfolio reports
+- Printable contracts, receipts, portfolio and maintenance reports
 - Local audit log
 - JSON backup, restore and reset
 - CSV and Excel bulk-import templates
@@ -45,12 +62,13 @@ System Administrator
 Email: admin@59re.demo
 Password: Demo59ADMIN!
 
-PROPERTY PHOTOS
+HOW TO TEST MAINTENANCE
 1. Sign in as Property Manager or Administrator.
-2. Open Properties & Units.
-3. Select Manage Photos, or open a property and choose Edit property & photo.
-4. Choose a JPG, PNG or WebP file and save.
-5. The system stores a compressed local copy without changing the unit, tenant or contract records.
+2. Open Maintenance from the left menu.
+3. Review the seeded jobs, schedule, completed work and costs.
+4. Select + New Maintenance Job to create a tenant request, inspection, repair or renovation.
+5. Open a job to progress it through Dispatch, In Progress, Complete, Verify and Close.
+6. Open any unit folder and choose the Maintenance tab to see that unit's jobs and total cost.
 
 BULK IMPORT
 1. Sign in as Property Manager or Administrator.
@@ -60,7 +78,7 @@ BULK IMPORT
 5. Upload the completed CSV and review all validation messages.
 6. Use Replace Portfolio for the first migration, or Merge and Update for later changes.
 
-The import file can contain property, unit, Kahramaa, current tenant and current contract information in one row. When Firebase is connected, the same validated workflow will write through the Firebase provider.
+The portfolio import file contains property, unit, Kahramaa, current tenant and current contract information. Maintenance jobs are operational records created inside the system and can later receive their own migration template if historical maintenance data is available.
 
 IMPORTANT SECURITY NOTE
 This is a local demonstration. Login and role controls are for workflow testing only.
@@ -68,21 +86,4 @@ Do not enter real QIDs, contracts, bank information or confidential tenant recor
 Production security will use Firebase Authentication, server-enforced Realtime Database and Storage Security Rules, App Check, MFA, session controls and backups.
 
 DATA NOTE
-The portfolio is seeded from the summary figures in the supplied dashboard PDF. Tenant names, contacts, meter numbers and most unit-level contract dates are synthetic demo data and are not official records. Property photographs are design placeholders and must later be replaced by the official photographs.
-
-FOLDER STRUCTURE
-- index.html
-- js/main.js
-- js/core/
-- js/data/
-- js/services/
-- js/modules/
-- js/utilities/
-- styles/
-- styles/modules/
-- assets/logos/
-- assets/images/properties/
-- assets/audio/
-- assets/icons/
-- assets/documents/
-- data-import/
+The portfolio is seeded from the summary figures in the supplied dashboard PDF. Tenant names, contacts, meter numbers, most unit-level contract dates and all maintenance work orders are synthetic demo records. Property photographs are design placeholders and must later be replaced by official photographs.
