@@ -83,6 +83,7 @@
         panel.classList.add("is-hidden");
         searchInput.value = "";
         if (button.dataset.resultType === "property") root.router.navigate("properties", { propertyId: button.dataset.resultId });
+        else if (button.dataset.resultType === "maintenance") root.modules.maintenance.openJob(button.dataset.resultId);
         else if (button.dataset.unitId) root.modules.unitDetail.open(button.dataset.unitId);
         else if (button.dataset.resultType === "unit") root.modules.unitDetail.open(button.dataset.resultId);
       }));
@@ -123,6 +124,7 @@
         <button class="quick-action-card" data-quick-action="unit"><span class="quick-icon">U</span><strong>Add new unit</strong><small>Select the property directly in the form. You do not need to open the property first.</small></button>
         <button class="quick-action-card" data-quick-action="tenant"><span class="quick-icon">T</span><strong>New tenant & contract</strong><small>Choose a unit, then create the tenant and active contract in one guided form.</small></button>
         <button class="quick-action-card" data-quick-action="payment"><span class="quick-icon">R</span><strong>Record payment</strong><small>Choose an occupied unit, record payment and issue its receipt.</small></button>
+        <button class="quick-action-card" data-quick-action="maintenance"><span class="quick-icon">M</span><strong>Maintenance job</strong><small>Create a tenant request, turnover inspection, scheduled repair or renovation job.</small></button>
         <button class="quick-action-card" data-quick-action="property"><span class="quick-icon">P</span><strong>Add property</strong><small>Create another building, villa, shop, warehouse or compound.</small></button>
         <button class="quick-action-card" data-quick-action="import"><span class="quick-icon">⇧</span><strong>Import many records</strong><small>Upload the portfolio CSV instead of entering every unit and tenant individually.</small></button>
         <button class="quick-action-card" data-quick-action="search"><span class="quick-icon">⌕</span><strong>Find a record</strong><small>Use the global search to open any property, unit, tenant or contract quickly.</small></button>
@@ -136,6 +138,7 @@
       if (action === "unit") return root.modules.properties.openUnitForm();
       if (action === "tenant") return openUnitPicker("tenant");
       if (action === "payment") return openUnitPicker("payment");
+      if (action === "maintenance") return root.modules.maintenance.openJobForm();
       if (action === "property") return root.modules.properties.openPropertyForm();
       if (action === "import") return root.router.navigate("import");
       if (action === "search") {
@@ -155,7 +158,7 @@
     const tenantMap = new Map(tenants.map((row) => [row.id, row]));
     const eligibleUnits = units.filter((unit) => {
       if (action === "payment") return Boolean(unit.currentContractId && unit.currentTenantId);
-      return !["maintenance", "unavailable"].includes(unit.status);
+      return !["inspection", "maintenance", "renovation", "unavailable"].includes(unit.status);
     });
     const actionTitle = action === "payment" ? "Select unit for payment" : "Select unit for tenant & contract";
     const actionHelp = action === "payment"
