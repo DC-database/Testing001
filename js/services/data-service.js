@@ -15,7 +15,19 @@
   async function init() {
     await db.open();
     const seeded = await db.get("settings", "seeded");
-    if (!seeded?.value) await seedDemoData();
+    if (!seeded?.value) {
+      await seedDemoData();
+    } else {
+      const maintenanceJobs = await db.getAll("maintenanceJobs");
+      if (!maintenanceJobs.length) {
+        const dataset = root.seedData.generateDemoDataset();
+        if (dataset.maintenanceJobs?.length) await db.bulkPut("maintenanceJobs", dataset.maintenanceJobs);
+        const team = dataset.settings?.find((row) => row.key === "maintenanceTeam");
+        const counter = dataset.settings?.find((row) => row.key === "maintenanceCounter");
+        if (team) await db.put("settings", team);
+        if (counter) await db.put("settings", counter);
+      }
+    }
     return true;
   }
 
@@ -191,6 +203,178 @@
     return rows.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
   }
 
+  async function getMaintenanceJobs(includeArchived = false) {
+    const rows = await db.getAll("maintenanceJobs");
+    return rows
+      .filter((row) => includeArchived || !row.archived)
+      .sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+  }
+
+  async function getMaintenanceJob(id) {
+    return id ? db.get("maintenanceJobs", id) : null;
+  }
+
+  async function getMaintenanceJobsByUnit(unitId, includeArchived = false) {
+    const rows = await db.getAllByIndex("maintenanceJobs", "unitId", unitId);
+    return rows
+      .filter((row) => includeArchived || !row.archived)
+      .sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+  }
+
+  function maintenanceActualCost(input) {
+    return ["materialCost", "laborCost", "contractorCost", "transportCost", "otherCost"]
+      .reduce((sum, key) => sum + Math.max(0, u.safeNumber(input[key], 0)), 0);
+  }
+
+  function maintenanceIsClosed(status) {
+    return ["verified", "closed", "cancelled"].includes(status);
+  }
+
+  async function synchronizeUnitAvailability(job, previous = null) {
+    const unit = await getUnit(job.unitId);
+    if (!unit) return;
+    const impact = job.availabilityImpact || "none";
+    const isFinal = maintenanceIsClosed(job.status);
+    let nextStatus = unit.status;
+
+    if (!isFinal && !unit.currentContractId) {
+      if (impact === "inspection") nextStatus = "inspection";
+      if (impact === "maintenance") nextStatus = "maintenance";
+      if (impact === "renovation") nextStatus = "renovation";
+    }
+
+    if (isFinal && ["inspection", "maintenance", "renovation"].includes(impact)) {
+      nextStatus = unit.currentContractId ? "occupied" : "vacant";
+    }
+
+    if (nextStatus !== unit.status) {
+      const updatedUnit = { ...unit, status: nextStatus, updatedAt: Date.now(), updatedBy: currentUserMeta().userId };
+      await db.put("units", updatedUnit);
+      await audit("UNIT_AVAILABILITY_UPDATED", "unit", unit.id, `${unit.unitNumber} status changed from ${unit.status} to ${nextStatus} by maintenance workflow.`, unit, updatedUnit);
+    }
+  }
+
+  async function saveMaintenanceJob(input) {
+    if (!root.auth.can(input.id ? "update" : "create")) throw new Error("Your demo role cannot modify maintenance jobs.");
+    const previous = input.id ? await getMaintenanceJob(input.id) : null;
+    const unit = await getUnit(input.unitId || previous?.unitId);
+    if (!unit) throw new Error("Please select a valid unit.");
+    const property = await getProperty(unit.propertyId);
+    const counterSetting = await db.get("settings", "maintenanceCounter");
+    const counter = Number(counterSetting?.value || 1);
+    const now = Date.now();
+    const status = String(input.status || previous?.status || "reported").trim();
+    const actualCost = maintenanceActualCost(input);
+    const job = {
+      id: previous?.id || u.uid("maintenance"),
+      jobNumber: previous?.jobNumber || `59RE-MNT-${new Date().getFullYear()}-${String(counter).padStart(4, "0")}`,
+      propertyId: unit.propertyId,
+      unitId: unit.id,
+      requestType: String(input.requestType || previous?.requestType || "tenant_request").trim(),
+      issueCategory: String(input.issueCategory || previous?.issueCategory || "General Repair").trim(),
+      title: String(input.title || previous?.title || "").trim(),
+      description: String(input.description || previous?.description || "").trim(),
+      priority: String(input.priority || previous?.priority || "normal").trim(),
+      responsibility: String(input.responsibility || previous?.responsibility || "owner").trim(),
+      availabilityImpact: String(input.availabilityImpact || previous?.availabilityImpact || "none").trim(),
+      status,
+      reportedBy: String(input.reportedBy || previous?.reportedBy || "Property Manager").trim(),
+      reportedAt: previous?.reportedAt || now,
+      scheduledDate: String(input.scheduledDate || previous?.scheduledDate || "").trim(),
+      scheduledTime: String(input.scheduledTime || previous?.scheduledTime || "").trim(),
+      expectedCompletionDate: String(input.expectedCompletionDate || previous?.expectedCompletionDate || "").trim(),
+      actualCompletionDate: String(input.actualCompletionDate || previous?.actualCompletionDate || (["completed", "verified", "closed"].includes(status) ? u.isoDate() : "")).trim(),
+      assignedTo: String(input.assignedTo || previous?.assignedTo || "Unassigned").trim(),
+      assignedType: String(input.assignedType || previous?.assignedType || "Internal / Approved Team").trim(),
+      estimatedCost: Math.max(0, u.safeNumber(input.estimatedCost, previous?.estimatedCost || 0)),
+      materialCost: Math.max(0, u.safeNumber(input.materialCost, previous?.materialCost || 0)),
+      laborCost: Math.max(0, u.safeNumber(input.laborCost, previous?.laborCost || 0)),
+      contractorCost: Math.max(0, u.safeNumber(input.contractorCost, previous?.contractorCost || 0)),
+      transportCost: Math.max(0, u.safeNumber(input.transportCost, previous?.transportCost || 0)),
+      otherCost: Math.max(0, u.safeNumber(input.otherCost, previous?.otherCost || 0)),
+      actualCost,
+      costStatus: String(input.costStatus || previous?.costStatus || (actualCost ? "actual" : "estimated")).trim(),
+      workNotes: String(input.workNotes || previous?.workNotes || "").trim(),
+      completionNotes: String(input.completionNotes || previous?.completionNotes || "").trim(),
+      beforePhotos: previous?.beforePhotos || [],
+      afterPhotos: previous?.afterPhotos || [],
+      createdAt: previous?.createdAt || now,
+      createdBy: previous?.createdBy || currentUserMeta().userId,
+      updatedAt: now,
+      updatedBy: currentUserMeta().userId,
+      archived: Boolean(previous?.archived)
+    };
+    if (!job.title) throw new Error("Maintenance job title is required.");
+    if (!job.issueCategory) throw new Error("Please select an issue category.");
+    if (job.expectedCompletionDate && job.scheduledDate && new Date(job.expectedCompletionDate) < new Date(job.scheduledDate)) {
+      throw new Error("Expected completion cannot be earlier than the scheduled date.");
+    }
+    await db.put("maintenanceJobs", job);
+    if (!previous) await db.put("settings", { key: "maintenanceCounter", value: counter + 1 });
+    await synchronizeUnitAvailability(job, previous);
+    await audit(previous ? "MAINTENANCE_UPDATED" : "MAINTENANCE_CREATED", "maintenance", job.id, `${job.jobNumber} · ${property.name} · ${unit.unitNumber} ${previous ? "updated" : "created"}.`, previous, job);
+    return job;
+  }
+
+  async function updateMaintenanceStatus(jobId, status, extra = {}) {
+    const job = await getMaintenanceJob(jobId);
+    if (!job) throw new Error("Maintenance job not found.");
+    return saveMaintenanceJob({ ...job, ...extra, id: job.id, status });
+  }
+
+  async function getMaintenanceSnapshot() {
+    const [jobs, properties, units] = await Promise.all([getMaintenanceJobs(), getProperties(), getUnits()]);
+    const propertyMap = new Map(properties.map((row) => [row.id, row]));
+    const unitMap = new Map(units.map((row) => [row.id, row]));
+    const openStatuses = new Set(["reported", "reviewed", "scheduled", "dispatched", "in_progress", "waiting_parts", "reopened"]);
+    const activeJobs = jobs.filter((job) => openStatuses.has(job.status));
+    const today = u.isoDate();
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    const completedJobs = jobs.filter((job) => ["completed", "verified", "closed"].includes(job.status));
+    const jobCost = (job) => Number(job.actualCost || job.estimatedCost || 0);
+    const costThisYear = completedJobs.filter((job) => new Date(job.actualCompletionDate || job.updatedAt).getFullYear() === currentYear).reduce((sum, job) => sum + jobCost(job), 0);
+    const costThisMonth = completedJobs.filter((job) => {
+      const date = new Date(job.actualCompletionDate || job.updatedAt);
+      return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
+    }).reduce((sum, job) => sum + jobCost(job), 0);
+    const overdue = activeJobs.filter((job) => job.expectedCompletionDate && job.expectedCompletionDate < today);
+    const dueToday = activeJobs.filter((job) => job.scheduledDate === today);
+    const costsByPropertyMap = new Map();
+    completedJobs.forEach((job) => costsByPropertyMap.set(job.propertyId, (costsByPropertyMap.get(job.propertyId) || 0) + jobCost(job)));
+    const costsByProperty = [...costsByPropertyMap.entries()].map(([propertyId, cost]) => ({
+      propertyId,
+      propertyName: propertyMap.get(propertyId)?.name || "Property",
+      cost
+    })).sort((a, b) => b.cost - a.cost);
+    const costsByCategoryMap = new Map();
+    completedJobs.forEach((job) => costsByCategoryMap.set(job.issueCategory, (costsByCategoryMap.get(job.issueCategory) || 0) + jobCost(job)));
+    const costsByCategory = [...costsByCategoryMap.entries()].map(([category, cost]) => ({ category, cost })).sort((a, b) => b.cost - a.cost);
+    const urgent = activeJobs.filter((job) => ["urgent", "high"].includes(job.priority)).sort((a, b) => {
+      const pa = a.priority === "urgent" ? 0 : 1;
+      const pb = b.priority === "urgent" ? 0 : 1;
+      return pa - pb || String(a.expectedCompletionDate || "9999").localeCompare(String(b.expectedCompletionDate || "9999"));
+    });
+    return {
+      jobs,
+      activeJobs,
+      completedJobs,
+      openCount: activeJobs.length,
+      overdueCount: overdue.length,
+      dueTodayCount: dueToday.length,
+      waitingPartsCount: activeJobs.filter((job) => job.status === "waiting_parts").length,
+      awaitingVerificationCount: jobs.filter((job) => job.status === "completed").length,
+      costThisMonth,
+      costThisYear,
+      costsByProperty,
+      costsByCategory,
+      urgent,
+      overdue,
+      propertyMap,
+      unitMap
+    };
+  }
+
   async function getAuditLogs(entityId = null) {
     const rows = entityId ? await db.getAllByIndex("auditLogs", "entityId", entityId) : await db.getAll("auditLogs");
     return rows.sort((a, b) => b.createdAt - a.createdAt);
@@ -207,12 +391,29 @@
     const oldBundle = { unit, contract, tenant };
     const updatedContract = { ...contract, status: "completed", endDate: closeDate, closedReason: reason, updatedAt: Date.now(), updatedBy: currentUserMeta().userId };
     const updatedTenant = { ...tenant, status: "previous", currentUnitId: null, updatedAt: Date.now(), updatedBy: currentUserMeta().userId };
-    const updatedUnit = { ...unit, status: "vacant", currentTenantId: null, currentContractId: null, updatedAt: Date.now(), updatedBy: currentUserMeta().userId };
+    const updatedUnit = { ...unit, status: "inspection", currentTenantId: null, currentContractId: null, updatedAt: Date.now(), updatedBy: currentUserMeta().userId };
 
     await db.put("contracts", updatedContract);
     await db.put("tenants", updatedTenant);
     await db.put("units", updatedUnit);
-    await audit("TENANCY_CLOSED", "unit", unitId, `${unit.unitNumber} tenancy closed: ${reason}.`, oldBundle, { unit: updatedUnit, contract: updatedContract, tenant: updatedTenant });
+    await saveMaintenanceJob({
+      unitId,
+      requestType: "move_out_inspection",
+      issueCategory: "Inspection",
+      title: "Move-out condition inspection",
+      description: `Inspect ${unit.unitNumber} after tenant move-out and confirm whether it is ready, requires maintenance, or requires renovation.`,
+      priority: "normal",
+      responsibility: "owner",
+      availabilityImpact: "inspection",
+      status: "reported",
+      reportedBy: currentUserMeta().userName,
+      assignedTo: "Property Manager",
+      assignedType: "Internal / Approved Team",
+      estimatedCost: 0,
+      scheduledDate: u.isoDate(),
+      expectedCompletionDate: u.isoDate()
+    });
+    await audit("TENANCY_CLOSED", "unit", unitId, `${unit.unitNumber} tenancy closed: ${reason}. Move-out inspection created.`, oldBundle, { unit: updatedUnit, contract: updatedContract, tenant: updatedTenant });
     return updatedUnit;
   }
 
@@ -325,16 +526,17 @@
   async function getUnitBundle(unitId) {
     const unit = await getUnit(unitId);
     if (!unit) return null;
-    const [property, tenant, contract, contracts, payments, logs] = await Promise.all([
+    const [property, tenant, contract, contracts, payments, maintenanceJobs, logs] = await Promise.all([
       getProperty(unit.propertyId),
       getTenant(unit.currentTenantId),
       getContract(unit.currentContractId),
       getContractsByUnit(unitId),
       getPaymentsByUnit(unitId),
+      getMaintenanceJobsByUnit(unitId),
       getAuditLogs(unitId)
     ]);
     const tenantMap = new Map((await getTenants(true)).map((row) => [row.id, row]));
-    return { unit, property, tenant, contract, contracts, payments, logs, tenantMap };
+    return { unit, property, tenant, contract, contracts, payments, maintenanceJobs, logs, tenantMap };
   }
 
   function summarizeProperty(property, units) {
@@ -346,14 +548,16 @@
     const occupied = counts.occupied || 0;
     const total = relevant.length;
     const monthly = relevant.filter((unit) => unit.status === "occupied").reduce((sum, unit) => sum + Number(unit.rentValue || 0), 0);
-    const potential = relevant.filter((unit) => unit.status !== "maintenance").reduce((sum, unit) => sum + Number(unit.rentValue || 0), 0);
+    const potential = relevant.filter((unit) => !["maintenance", "renovation", "unavailable"].includes(unit.status)).reduce((sum, unit) => sum + Number(unit.rentValue || 0), 0);
     return {
       ...property,
       totalUnits: total,
       occupied,
       booked: counts.booked || 0,
       vacant: counts.vacant || 0,
-      maintenance: counts.maintenance || 0,
+      inspection: counts.inspection || 0,
+      maintenance: (counts.maintenance || 0) + (counts.renovation || 0) + (counts.inspection || 0),
+      renovation: counts.renovation || 0,
       occupancyRate: total ? occupied / total * 100 : 0,
       monthlyRevenue: monthly,
       annualRevenue: monthly * 12,
@@ -363,11 +567,12 @@
   }
 
   async function getDashboardSnapshot() {
-    const [properties, units, contracts, payments] = await Promise.all([
+    const [properties, units, contracts, payments, maintenanceSummary] = await Promise.all([
       getProperties(),
       getUnits(),
       getContracts(),
-      getPayments()
+      getPayments(),
+      getMaintenanceSnapshot()
     ]);
     const propertyStats = properties.map((property) => summarizeProperty(property, units));
     const totalUnits = units.length;
@@ -378,7 +583,9 @@
     const occupied = statusCounts.occupied || 0;
     const booked = statusCounts.booked || 0;
     const vacant = statusCounts.vacant || 0;
-    const maintenance = statusCounts.maintenance || 0;
+    const inspection = statusCounts.inspection || 0;
+    const renovation = statusCounts.renovation || 0;
+    const maintenance = (statusCounts.maintenance || 0) + renovation;
     const monthlyRevenue = propertyStats.reduce((sum, property) => sum + property.monthlyRevenue, 0);
     const potentialRevenue = propertyStats.reduce((sum, property) => sum + property.potentialRevenue, 0);
     const vacancyLoss = propertyStats.reduce((sum, property) => sum + property.vacancyLoss, 0);
@@ -407,8 +614,12 @@
     units.filter((unit) => unit.status === "vacant").forEach((unit) => {
       actions.push({ type: "vacant", severity: "warning", title: "Vacant unit", detail: `${propertyMap.get(unit.propertyId)?.name || "Property"} · ${unit.unitNumber} · ${unit.aptType || "Unit"}`, meta: `${u.money(unit.rentValue)}/mo potential`, unitId: unit.id, sort: 3000 });
     });
-    units.filter((unit) => unit.status === "maintenance").forEach((unit) => {
-      actions.push({ type: "maintenance", severity: "warning", title: "Maintenance review", detail: `${propertyMap.get(unit.propertyId)?.name || "Property"} · ${unit.unitNumber}`, meta: "Needs review", unitId: unit.id, sort: 2500 });
+    maintenanceSummary.overdue.slice(0, 12).forEach((job) => {
+      const unit = unitMap.get(job.unitId);
+      actions.push({ type: "maintenance", severity: job.priority === "urgent" ? "danger" : "warning", title: "Maintenance overdue", detail: `${propertyMap.get(job.propertyId)?.name || "Property"} · ${unit?.unitNumber || "Unit"} · ${job.title}`, meta: `${Math.abs(u.daysBetween(job.expectedCompletionDate, today))} day(s) overdue`, unitId: job.unitId, maintenanceId: job.id, sort: -2500 });
+    });
+    units.filter((unit) => ["inspection", "maintenance", "renovation"].includes(unit.status)).forEach((unit) => {
+      actions.push({ type: "maintenance", severity: "warning", title: u.titleCase(unit.status), detail: `${propertyMap.get(unit.propertyId)?.name || "Property"} · ${unit.unitNumber}`, meta: "Not ready for tenant", unitId: unit.id, sort: 2500 });
     });
     units.filter((unit) => ["occupied", "booked"].includes(unit.status) && (!unit.currentTenantId || !unit.currentContractId)).forEach((unit) => {
       actions.push({ type: "integrity", severity: "danger", title: "Incomplete occupancy record", detail: `${propertyMap.get(unit.propertyId)?.name || "Property"} · ${unit.unitNumber}`, meta: "Missing tenant or contract", unitId: unit.id, sort: -5000 });
@@ -441,6 +652,8 @@
       booked,
       vacant,
       maintenance,
+      inspection,
+      renovation,
       occupancyRate: totalUnits ? occupied / totalUnits * 100 : 0,
       monthlyRevenue,
       annualRevenue: monthlyRevenue * 12,
@@ -452,14 +665,15 @@
       pastDue: expiryContracts.filter((contract) => contract.daysLeft < 0 && contract.status === "active").length,
       actions,
       leaseBuckets,
-      integrityIssues
+      integrityIssues,
+      maintenanceSummary
     };
   }
 
   async function search(query) {
     const term = u.normalize(query);
     if (!term) return [];
-    const [properties, units, tenants, contracts] = await Promise.all([getProperties(), getUnits(), getTenants(), getContracts()]);
+    const [properties, units, tenants, contracts, maintenanceJobs] = await Promise.all([getProperties(), getUnits(), getTenants(), getContracts(), getMaintenanceJobs()]);
     const propertyMap = new Map(properties.map((row) => [row.id, row]));
     const results = [];
     properties.forEach((property) => {
@@ -481,6 +695,11 @@
     contracts.forEach((contract) => {
       if (u.normalize(contract.contractNumber).includes(term)) {
         results.push({ type: "contract", id: contract.id, unitId: contract.unitId, title: contract.contractNumber, subtitle: `${u.titleCase(contract.status)} · ${u.date(contract.endDate)}` });
+      }
+    });
+    maintenanceJobs.forEach((job) => {
+      if ([job.jobNumber, job.title, job.issueCategory, job.assignedTo, job.status].some((value) => u.normalize(value).includes(term))) {
+        results.push({ type: "maintenance", id: job.id, unitId: job.unitId, title: `${job.jobNumber} · ${job.title}`, subtitle: `${u.titleCase(job.status)} · ${job.assignedTo || "Unassigned"}` });
       }
     });
     return results.slice(0, 30);
@@ -510,7 +729,7 @@
     const user = currentUserMeta();
 
     if (mode === "replace") {
-      for (const store of ["properties", "units", "tenants", "contracts", "payments"]) await db.clear(store);
+      for (const store of ["properties", "units", "tenants", "contracts", "payments", "maintenanceJobs"]) await db.clear(store);
     }
 
     const [existingProperties, existingUnits, existingTenants, existingContracts] = await Promise.all([
@@ -750,6 +969,12 @@
     getContract,
     getPayments,
     getPaymentsByUnit,
+    getMaintenanceJobs,
+    getMaintenanceJob,
+    getMaintenanceJobsByUnit,
+    saveMaintenanceJob,
+    updateMaintenanceStatus,
+    getMaintenanceSnapshot,
     getAuditLogs,
     closeTenancy,
     assignTenantAndContract,

@@ -76,7 +76,7 @@
     const errors = [];
     const warnings = [];
     const seen = new Set();
-    const allowedStatuses = new Set(["occupied", "booked", "vacant", "maintenance", "unavailable"]);
+    const allowedStatuses = new Set(["occupied", "booked", "vacant", "inspection", "maintenance", "renovation", "unavailable"]);
     const allowedContractStatuses = new Set(["active", "upcoming", "draft", "expired", "completed", "terminated", "cancelled", ""]);
 
     rows.forEach((row) => {
