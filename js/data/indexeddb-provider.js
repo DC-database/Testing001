@@ -3,8 +3,8 @@
 
   const root = window.RE59;
   const DB_NAME = "59RealEstateDemoDB";
-  const DB_VERSION = 1;
-  const STORE_NAMES = ["properties", "units", "tenants", "contracts", "payments", "auditLogs", "settings"];
+  const DB_VERSION = 2;
+  const STORE_NAMES = ["properties", "units", "tenants", "contracts", "payments", "maintenanceJobs", "auditLogs", "settings"];
   let database = null;
 
   function requestToPromise(request) {
@@ -50,6 +50,14 @@
           store.createIndex("contractId", "contractId", { unique: false });
           store.createIndex("unitId", "unitId", { unique: false });
           store.createIndex("status", "status", { unique: false });
+        }
+        if (!db.objectStoreNames.contains("maintenanceJobs")) {
+          const store = db.createObjectStore("maintenanceJobs", { keyPath: "id" });
+          store.createIndex("propertyId", "propertyId", { unique: false });
+          store.createIndex("unitId", "unitId", { unique: false });
+          store.createIndex("status", "status", { unique: false });
+          store.createIndex("scheduledDate", "scheduledDate", { unique: false });
+          store.createIndex("assignedTo", "assignedTo", { unique: false });
         }
         if (!db.objectStoreNames.contains("auditLogs")) {
           const store = db.createObjectStore("auditLogs", { keyPath: "id" });

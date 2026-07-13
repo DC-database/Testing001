@@ -298,6 +298,85 @@
       });
     });
 
+    const maintenanceJobs = [];
+    const maintenanceTeam = [
+      "In-house Maintenance Team",
+      "AC Technician",
+      "Electrician",
+      "Plumber",
+      "Carpenter / Painter",
+      "Cleaning Team",
+      "External Contractor"
+    ];
+    const propertyById = new Map(properties.map((item) => [item.id, item]));
+    const demoJobs = [
+      { propertyId: "property-r16", unitStatus: "occupied", offset: 0, requestType: "tenant_request", category: "Air Conditioning", title: "AC deep cleaning and airflow check", priority: "normal", status: "scheduled", assignedTo: "AC Technician", scheduledDays: 1, expectedDays: 1, estimatedCost: 260, materialCost: 35, laborCost: 180, responsibility: "owner", impact: "none" },
+      { propertyId: "property-r19", unitStatus: "occupied", offset: 4, requestType: "tenant_request", category: "Electrical", title: "Replace damaged light fittings", priority: "normal", status: "in_progress", assignedTo: "Electrician", scheduledDays: 0, expectedDays: 0, estimatedCost: 320, materialCost: 145, laborCost: 150, responsibility: "owner", impact: "none" },
+      { propertyId: "property-foxhills", unitStatus: "occupied", offset: 8, requestType: "tenant_request", category: "Plumbing", title: "Bathroom water leakage inspection", priority: "high", status: "waiting_parts", assignedTo: "Plumber", scheduledDays: -1, expectedDays: 2, estimatedCost: 850, materialCost: 430, laborCost: 260, responsibility: "owner", impact: "none" },
+      { propertyId: "property-muntazah", unitStatus: "occupied", offset: 2, requestType: "tenant_request", category: "General Repair", title: "Door lock and hinge adjustment", priority: "normal", status: "reported", assignedTo: "In-house Maintenance Team", scheduledDays: 2, expectedDays: 2, estimatedCost: 180, materialCost: 65, laborCost: 90, responsibility: "owner", impact: "none" },
+      { propertyId: "property-mansoura", unitStatus: "occupied", offset: 5, requestType: "emergency", category: "Electrical", title: "Intermittent power fault in kitchen", priority: "urgent", status: "dispatched", assignedTo: "Electrician", scheduledDays: 0, expectedDays: 0, estimatedCost: 650, materialCost: 220, laborCost: 300, responsibility: "owner", impact: "none" },
+      { propertyId: "property-ghazal", unitStatus: "occupied", offset: 1, requestType: "preventive", category: "Air Conditioning", title: "Quarterly AC servicing", priority: "low", status: "scheduled", assignedTo: "AC Technician", scheduledDays: 4, expectedDays: 4, estimatedCost: 450, materialCost: 80, laborCost: 320, responsibility: "owner", impact: "none" },
+      { propertyId: "property-nb1", unitStatus: "maintenance", offset: 0, requestType: "move_out_inspection", category: "Turnover Preparation", title: "Repaint, repair socket and seal bathroom leak", priority: "high", status: "in_progress", assignedTo: "Carpenter / Painter", scheduledDays: -2, expectedDays: 3, estimatedCost: 2600, materialCost: 1250, laborCost: 900, contractorCost: 250, responsibility: "owner", impact: "maintenance" },
+      { propertyId: "property-umm", unitStatus: "vacant", offset: 0, requestType: "move_out_inspection", category: "Inspection", title: "Move-out condition inspection", priority: "normal", status: "scheduled", assignedTo: "Property Manager", scheduledDays: 1, expectedDays: 1, estimatedCost: 0, responsibility: "owner", impact: "inspection" },
+      { propertyId: "property-r16", unitStatus: "vacant", offset: 1, requestType: "pre_leasing", category: "Cleaning", title: "Deep cleaning before tenant handover", priority: "normal", status: "completed", assignedTo: "Cleaning Team", scheduledDays: -8, expectedDays: -7, actualDays: -7, estimatedCost: 420, materialCost: 70, laborCost: 330, responsibility: "owner", impact: "maintenance" },
+      { propertyId: "property-r16", unitStatus: "occupied", offset: 20, requestType: "tenant_request", category: "Plumbing", title: "Kitchen mixer replacement", priority: "normal", status: "closed", assignedTo: "Plumber", scheduledDays: -35, expectedDays: -34, actualDays: -34, estimatedCost: 390, materialCost: 210, laborCost: 150, responsibility: "owner", impact: "none" },
+      { propertyId: "property-r19", unitStatus: "occupied", offset: 34, requestType: "tenant_request", category: "Appliance", title: "Owner-supplied cooker repair", priority: "high", status: "closed", assignedTo: "External Contractor", scheduledDays: -52, expectedDays: -49, actualDays: -50, estimatedCost: 980, materialCost: 440, contractorCost: 470, responsibility: "owner", impact: "none" },
+      { propertyId: "property-villas", unitStatus: "occupied", offset: 0, requestType: "preventive", category: "Pest Control", title: "Quarterly pest-control service", priority: "low", status: "verified", assignedTo: "External Contractor", scheduledDays: -18, expectedDays: -18, actualDays: -18, estimatedCost: 750, contractorCost: 720, responsibility: "owner", impact: "none" },
+      { propertyId: "property-foxhills", unitStatus: "occupied", offset: 14, requestType: "tenant_request", category: "Air Conditioning", title: "Replace AC capacitor", priority: "high", status: "closed", assignedTo: "AC Technician", scheduledDays: -70, expectedDays: -69, actualDays: -69, estimatedCost: 480, materialCost: 250, laborCost: 190, responsibility: "owner", impact: "none" },
+      { propertyId: "property-muntazah", unitStatus: "occupied", offset: 9, requestType: "tenant_request", category: "Electrical", title: "Replace bathroom exhaust fan", priority: "normal", status: "closed", assignedTo: "Electrician", scheduledDays: -95, expectedDays: -93, actualDays: -94, estimatedCost: 360, materialCost: 170, laborCost: 150, responsibility: "owner", impact: "none" },
+      { propertyId: "property-umm", unitStatus: "vacant", offset: 2, requestType: "renovation", category: "Renovation", title: "Kitchen cabinet and flooring refresh", priority: "normal", status: "completed", assignedTo: "External Contractor", scheduledDays: -22, expectedDays: -8, actualDays: -10, estimatedCost: 12500, materialCost: 6400, contractorCost: 5400, transportCost: 300, responsibility: "owner", impact: "renovation" },
+      { propertyId: "property-store", unitStatus: "occupied", offset: 0, requestType: "preventive", category: "Fire Safety", title: "Annual fire-safety equipment inspection", priority: "normal", status: "closed", assignedTo: "External Contractor", scheduledDays: -120, expectedDays: -120, actualDays: -120, estimatedCost: 1150, contractorCost: 1100, responsibility: "owner", impact: "none" }
+    ];
+
+    demoJobs.forEach((definition, index) => {
+      const matching = units.filter((unit) => unit.propertyId === definition.propertyId && unit.status === definition.unitStatus);
+      const unit = matching[definition.offset % Math.max(matching.length, 1)] || units.find((item) => item.propertyId === definition.propertyId);
+      if (!unit) return;
+      const scheduledDate = isoDate(new Date(Date.now() + definition.scheduledDays * 86400000));
+      const expectedCompletionDate = isoDate(new Date(Date.now() + definition.expectedDays * 86400000));
+      const actualCompletionDate = definition.actualDays === undefined ? "" : isoDate(new Date(Date.now() + definition.actualDays * 86400000));
+      const actualCost = Number(definition.materialCost || 0) + Number(definition.laborCost || 0) + Number(definition.contractorCost || 0) + Number(definition.transportCost || 0) + Number(definition.otherCost || 0);
+      maintenanceJobs.push({
+        id: `maintenance-demo-${String(index + 1).padStart(3, "0")}`,
+        jobNumber: `59RE-MNT-${new Date().getFullYear()}-${String(index + 1).padStart(4, "0")}`,
+        propertyId: unit.propertyId,
+        unitId: unit.id,
+        requestType: definition.requestType,
+        issueCategory: definition.category,
+        title: definition.title,
+        description: `${definition.title}. Demo maintenance record for ${propertyById.get(unit.propertyId)?.name || "property"} · ${unit.unitNumber}.`,
+        priority: definition.priority,
+        responsibility: definition.responsibility,
+        availabilityImpact: definition.impact,
+        status: definition.status,
+        reportedBy: definition.requestType === "tenant_request" ? "Current Tenant" : "Property Manager",
+        reportedAt: now + (definition.scheduledDays - 2) * 86400000,
+        scheduledDate,
+        scheduledTime: ["08:30", "09:00", "10:30", "13:00", "15:00"][index % 5],
+        expectedCompletionDate,
+        actualCompletionDate,
+        assignedTo: definition.assignedTo,
+        assignedType: definition.assignedTo === "External Contractor" ? "Contractor" : "Internal / Approved Team",
+        estimatedCost: Number(definition.estimatedCost || 0),
+        materialCost: Number(definition.materialCost || 0),
+        laborCost: Number(definition.laborCost || 0),
+        contractorCost: Number(definition.contractorCost || 0),
+        transportCost: Number(definition.transportCost || 0),
+        otherCost: Number(definition.otherCost || 0),
+        actualCost,
+        costStatus: ["completed", "verified", "closed"].includes(definition.status) ? "actual" : "estimated",
+        workNotes: "Demo work notes. Add quotations, materials and progress updates here.",
+        completionNotes: actualCompletionDate ? "Work completed and recorded in the demo history." : "",
+        beforePhotos: [],
+        afterPhotos: [],
+        createdAt: now + (definition.scheduledDays - 2) * 86400000,
+        createdBy: "system-seed",
+        updatedAt: now,
+        updatedBy: "system-seed",
+        archived: false
+      });
+    });
+
     const auditLogs = [{
       id: uid("log"),
       action: "DEMO_INITIALIZED",
@@ -315,10 +394,13 @@
       { key: "seeded", value: true },
       { key: "company", value: { name: "59 Real Estate", theme: "black-white", mode: "demo" } },
       { key: "receiptCounter", value: receiptCounter },
-      { key: "schemaVersion", value: 1 }
+      { key: "schemaVersion", value: 2 }
     ];
 
-    return { properties, units, tenants, contracts, payments, auditLogs, settings };
+    settings.push({ key: "maintenanceTeam", value: maintenanceTeam });
+    settings.push({ key: "maintenanceCounter", value: maintenanceJobs.length + 1 });
+
+    return { properties, units, tenants, contracts, payments, maintenanceJobs, auditLogs, settings };
   }
 
   root.seedData = {
