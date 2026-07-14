@@ -1,72 +1,13 @@
-59 REAL ESTATE v0.8.0 — TESTING CHECKLIST
+59 Real Estate v0.8.1 Logo Test
 
-BEFORE UPLOAD
-[ ] Confirm the current live system is v0.7.2.
-[ ] Download a backup from Settings if important local test records exist.
-[ ] Keep a copy of the current repository.
-
-UPLOAD
-[ ] Replace index.html and version.json.
-[ ] Replace the included js files inside js/.
-[ ] Replace the included CSS files inside styles/.
-[ ] Add styles/mobile-app.css.
-[ ] Add all 11 compatibility JPG files directly inside assets/.
-[ ] Do not create nested folders.
-[ ] Wait for GitHub Pages deployment to finish.
-[ ] Refresh with Ctrl+F5 on desktop and fully close/reopen the site on mobile.
-
-CHROME IMAGE COMPATIBILITY
-[ ] Open the upgraded live site in the same Chrome profile that previously showed 404 images.
-[ ] Confirm all property cards now show images without clearing IndexedDB.
-[ ] Confirm the console no longer reports old property-image 404 errors.
-[ ] Confirm Edge and another browser still show the same images.
-
-MOBILE LOGIN
-[ ] Test on a narrow Android or iPhone portrait screen.
-[ ] Confirm the login screen does not extend horizontally.
-[ ] Confirm 59 and REAL ESTATE are on one proportional horizontal line.
-[ ] Open the keyboard and confirm fields/button remain reachable.
-[ ] Confirm login remains Night theme.
-
-MOBILE APPLICATION
-[ ] Confirm no page-level horizontal scrolling in portrait.
-[ ] Confirm bottom navigation and floating action button do not cover content.
-[ ] Confirm the phone stays in the mobile app layout after rotating to landscape.
-[ ] Confirm desktop sidebar never appears on the phone.
-
-PROPERTIES & UNITS
-[ ] Confirm one property card per row in portrait.
-[ ] Confirm status chips scroll internally, not the whole page.
-[ ] Confirm Unit Directory shows mobile cards, not a clipped table.
-[ ] Confirm a unit card opens the complete unit folder.
-
-PORTFOLIO OVERVIEW
-[ ] Confirm KPI cards fit the screen.
-[ ] Confirm Monthly Maintenance Cost Trend fits fully inside its card.
-[ ] Confirm Lease Expiry mobile summary does not extend outside the screen.
-[ ] Confirm View Full Timeline opens the complete 12-month detail.
-
-LEASES AND TENANTS
-[ ] Confirm leases appear as portrait cards without sideways scrolling.
-[ ] Confirm tenants appear as portrait cards without sideways scrolling.
-[ ] Confirm opening a card shows the full record.
-
-FINANCIALS
-[ ] Confirm payment schedules appear as mobile cards.
-[ ] Confirm due date, balance, status and payment actions are readable.
-[ ] Confirm mobile says Receipt PDF / Save or Share PDF, not official Print.
-
-MAINTENANCE
-[ ] Confirm jobs appear as mobile cards.
-[ ] Confirm schedule, assigned person, status and cost remain readable.
-[ ] Confirm field actions are touch friendly.
-
-USERS & ACCESS / SETTINGS
-[ ] Confirm Users & Access is clean and card based on mobile.
-[ ] Confirm permissions are grouped and do not require horizontal scrolling.
-[ ] Confirm Action Center and Audit Activity use mobile cards.
-
-DESKTOP REGRESSION
-[ ] Confirm desktop sidebar, header, tables and charts remain unchanged in layout.
-[ ] Confirm Properties, Overview, Leases, Tenants, Maintenance, Financials and Users & Access work.
-[ ] Confirm official desktop Print remains available and uses the approved print layout.
+1. Upload every patch file over v0.8.0 using the included folder structure.
+2. Wait for GitHub Pages deployment to finish.
+3. Open the live site and press Ctrl+F5 in Chrome.
+4. Desktop sidebar: confirm 59 and REAL ESTATE appear on one horizontal line.
+5. Desktop login: confirm the full logo is proportional and centered.
+6. Mobile login: confirm the full horizontal logo fits without extending beyond the screen.
+7. Mobile header: confirm the compact horizontal logo remains on one line beside the page title.
+8. Switch Night/Day inside the app:
+   - Night: gold 59 + white REAL ESTATE.
+   - Day: gold 59 + dark REAL ESTATE.
+9. Resize/rotate the phone: the logo must never stack.

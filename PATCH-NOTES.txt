@@ -1,93 +1,21 @@
-59 REAL ESTATE — PATCH v0.8.0
-Applies to: v0.7.2 only
-Release type: Mobile application rebuild + Chrome property-image compatibility
+59 Real Estate v0.8.1 · Definitive Horizontal Logo Lockup
+Base required: v0.8.0
 
-INSTALLATION ORDER
-v0.6.0 Full Build
-→ v0.7.0 Patch
-→ v0.7.1 Logo Fix
-→ v0.7.2 Mobile & Users Access Patch
-→ v0.8.0 Mobile Application Rebuild
-
-IMPORTANT
-- Keep the existing flat folder structure.
-- Do not create JavaScript subfolders.
-- Upload/replace only the files included in this patch.
-- Do not delete IndexedDB or existing local records.
-- The old styles/mobile.css file may remain in the repository; index.html no longer loads it.
-
-WHAT CHANGED
-
-1. True mobile presentation layer
-- Mobile now has its own application shell and styling instead of shrinking the desktop workspace.
-- Phones remain in the mobile application identity in portrait and landscape.
-- Desktop and mobile continue sharing the same database, permissions, calculations, CRUD logic and reports.
-- New dedicated stylesheet: styles/mobile-app.css.
-
-2. Mobile login rebuilt
-- Fits the real mobile viewport using dynamic viewport height and safe-area spacing.
-- Prevents horizontal overflow and input zoom.
-- Handles the on-screen keyboard more safely.
-- Uses the real 59.svg and RE.svg in one coordinated horizontal logo lockup.
-- Keeps Night mode as the fixed login theme.
-
-3. Mobile navigation and workflows
-- Fixed mobile header, bottom app navigation, More sheet and floating action button.
-- Touch-first full-screen modals and forms.
-- Safe spacing above the bottom navigation.
-- No desktop sidebar on phones.
-
-4. True mobile records
-- Units, leases, tenants, payments, maintenance jobs, action items, audit activity and unit history use mobile cards.
-- Portrait mode no longer squeezes the desktop tables.
-- Landscape may expose expanded tables inside the mobile shell when useful.
-
-5. Mobile charts
-- Monthly maintenance trend is rebuilt to fit the phone width.
-- Lease expiry shows the mobile summary without extending beyond the viewport.
-- Page-level horizontal scrolling is blocked.
-
-6. Users & Access mobile refinement
-- User cards, role cards, grouped permissions, sessions and activity use a mobile-first layout.
-- Permission controls remain readable and touch friendly.
-
-7. Mobile document behavior
-- Mobile actions use Save / Share PDF language.
-- Official printing remains a desktop workflow.
-
-8. Chrome property-image repair
-- Automatically migrates old property cover paths stored in Chrome IndexedDB.
-- Adds legacy filename aliases so old records remain compatible.
-- Adds image fallbacks so a bad stored path cannot leave a broken-image icon.
-- No local data reset is required.
-
-CHANGED FILES
+Changed files:
 - index.html
-- version.json
-- js/action-center.js
-- js/app-state.js
-- js/data-service.js
-- js/financials.js
-- js/maintenance.js
-- js/mobile-ui.js
-- js/portfolio-overview.js
-- js/properties-units.js
-- js/settings.js
-- js/ui.js
-- js/unit-detail.js
 - styles/main.css
-- styles/components.css
-- styles/mobile-app.css (new)
+- styles/mobile-app.css
+- assets/logo-horizontal-night.svg (new)
+- assets/logo-horizontal-light.svg (new)
+- version.json
 
-NEW COMPATIBILITY ASSETS
-- assets/marina-tower-16.jpg
-- assets/r19-tower.jpg
-- assets/foxhills.jpg
-- assets/building-a29.jpg
-- assets/stand-alone-villas.jpg
-- assets/nb1-residence.jpg
-- assets/muntazah-building.jpg
-- assets/al-mansoura-46.jpg
-- assets/al-ghazal-compound.jpg
-- assets/umm-ghuwailina-b5.jpg
-- assets/store-birkat-al-awamer.jpg
+Fixes:
+- Replaces the two independently positioned 59.svg and RE.svg images with one composed official horizontal logo asset.
+- Prevents the 59 mark from appearing above REAL ESTATE.
+- Locks the mark and wordmark to a coordinated, proportional single line.
+- Uses a gold 59 mark with a white wordmark in Night mode.
+- Uses a gold 59 mark with a dark wordmark in Day mode.
+- Applies the same correct lockup to desktop sidebar, desktop login, mobile login and mobile header.
+- Adds cache-busting v0.8.1 URLs for the changed logo and style files.
+
+Upload the files using the same folder structure. Do not place the assets inside an extra assets/assets folder.
