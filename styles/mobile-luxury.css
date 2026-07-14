@@ -1,0 +1,299 @@
+/* =========================================================
+   59 REAL ESTATE · MOBILE LUXURY APP IDENTITY · v0.8.6
+   Mobile-only presentation layer. It does not inherit the
+   desktop floating-sidebar composition.
+   ========================================================= */
+
+html[data-ui="mobile"] {
+  --mobile-card-glass-night: rgba(14,14,17,.78);
+  --mobile-card-glass-day: rgba(255,255,255,.72);
+  --mobile-line-night: rgba(255,255,255,.11);
+  --mobile-line-day: rgba(255,255,255,.90);
+}
+
+html[data-ui="mobile"][data-theme="night"] body,
+html[data-ui="mobile"][data-theme="night"] .app-shell {
+  background:
+    radial-gradient(ellipse 72% 34% at 0 0,rgba(201,165,82,.12),transparent 68%),
+    radial-gradient(ellipse 74% 44% at 100% 100%,rgba(120,132,151,.08),transparent 70%),
+    #08080a;
+  background-attachment:fixed;
+}
+html[data-ui="mobile"][data-theme="day"] body,
+html[data-ui="mobile"][data-theme="day"] .app-shell {
+  background:
+    radial-gradient(ellipse 72% 36% at 0 0,rgba(184,148,80,.18),transparent 68%),
+    radial-gradient(ellipse 78% 44% at 100% 100%,rgba(123,130,143,.10),transparent 72%),
+    #f4f2ed;
+  background-attachment:fixed;
+}
+
+/* Mobile login remains a dedicated app screen and always fits. */
+html[data-ui="mobile"] .login-screen {
+  min-height:var(--app-height,100dvh);
+  background:
+    radial-gradient(circle at 18% 5%,rgba(205,169,84,.17),transparent 31%),
+    radial-gradient(circle at 100% 92%,rgba(129,141,159,.08),transparent 34%),
+    linear-gradient(155deg,#08080a,#101013 52%,#070708);
+}
+html[data-ui="mobile"] .login-panel {
+  min-height:var(--app-height,100dvh);
+  padding:max(20px,env(safe-area-inset-top)) 16px max(22px,env(safe-area-inset-bottom));
+}
+html[data-ui="mobile"] .login-card {
+  max-height:none;
+  border-color:rgba(255,255,255,.15);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.075),transparent 48%),
+    rgba(12,12,15,.78);
+  box-shadow:0 34px 92px rgba(0,0,0,.50), inset 0 1px 0 rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(30px) saturate(145%);
+  backdrop-filter:blur(30px) saturate(145%);
+}
+
+/* True mobile floating chrome */
+html[data-ui="mobile"] .topbar {
+  inset:calc(8px + env(safe-area-inset-top)) 10px auto;
+  width:auto;
+  height:58px;
+  padding:0 10px;
+  border:1px solid var(--mobile-line-night);
+  border-radius:21px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.055),transparent 50%),
+    rgba(10,10,13,.80);
+  box-shadow:0 18px 48px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.07);
+  -webkit-backdrop-filter:blur(28px) saturate(145%);
+  backdrop-filter:blur(28px) saturate(145%);
+}
+html[data-ui="mobile"][data-theme="day"] .topbar {
+  border-color:var(--mobile-line-day);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,255,255,.38)),
+    rgba(255,255,255,.74);
+  box-shadow:0 16px 42px rgba(60,48,30,.14), inset 0 1px 0 #fff;
+}
+html[data-ui="mobile"] .mobile-brand > b { border-left-color:rgba(255,255,255,.11); }
+html[data-ui="mobile"][data-theme="day"] .mobile-brand > b {
+  color:rgba(23,23,25,.70);
+  border-left-color:rgba(18,18,20,.11);
+}
+html[data-ui="mobile"] .topbar-icon-button,
+html[data-ui="mobile"] .avatar-small {
+  border-radius:15px;
+  border-color:rgba(255,255,255,.10);
+  background:rgba(255,255,255,.055);
+}
+html[data-ui="mobile"][data-theme="day"] .topbar-icon-button,
+html[data-ui="mobile"][data-theme="day"] .avatar-small {
+  color:#171719;
+  border-color:rgba(18,18,20,.08);
+  background:rgba(255,255,255,.58);
+}
+
+html[data-ui="mobile"] .app-view {
+  padding-top:calc(76px + env(safe-area-inset-top));
+  padding-bottom:calc(var(--mobile-nav-height) + var(--mobile-safe-bottom) + 96px);
+  background:transparent !important;
+}
+
+html[data-ui="mobile"] .mobile-bottom-nav {
+  inset:auto 10px calc(8px + var(--mobile-safe-bottom));
+  height:62px;
+  padding:5px;
+  border:1px solid var(--mobile-line-night);
+  border-radius:22px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.055),transparent 48%),
+    rgba(9,9,12,.84);
+  box-shadow:0 20px 54px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+  -webkit-backdrop-filter:blur(28px) saturate(145%);
+  backdrop-filter:blur(28px) saturate(145%);
+}
+html[data-ui="mobile"][data-theme="day"] .mobile-bottom-nav {
+  border-color:var(--mobile-line-day);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,255,255,.36)),
+    rgba(255,255,255,.76);
+  box-shadow:0 18px 46px rgba(58,47,30,.16), inset 0 1px 0 #fff;
+}
+html[data-ui="mobile"] .mobile-bottom-nav button { min-height:50px; border-radius:16px; }
+html[data-ui="mobile"] .mobile-bottom-nav button.active {
+  color:#171107;
+  background:linear-gradient(145deg,#d8ba70,#b98e38);
+  box-shadow:0 8px 22px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.42);
+}
+html[data-ui="mobile"][data-theme="day"] .mobile-bottom-nav button { color:#77736d; }
+html[data-ui="mobile"][data-theme="day"] .mobile-bottom-nav button.active { color:#171107; }
+html[data-ui="mobile"] .mobile-fab {
+  right:18px;
+  bottom:calc(82px + var(--mobile-safe-bottom));
+  border-radius:19px;
+  box-shadow:0 18px 38px rgba(0,0,0,.40),0 0 0 5px rgba(209,173,88,.09),inset 0 1px 0 rgba(255,255,255,.42);
+}
+
+/* Mobile cards are touch surfaces, not compressed desktop panels. */
+html[data-ui="mobile"] .panel,
+html[data-ui="mobile"] .premium-panel,
+html[data-ui="mobile"] .mobile-record-card,
+html[data-ui="mobile"] .mobile-payment-card,
+html[data-ui="mobile"] .stat-card,
+html[data-ui="mobile"] .settings-card,
+html[data-ui="mobile"] .report-card {
+  border:1px solid var(--mobile-line-night);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.045),transparent 48%),
+    var(--mobile-card-glass-night);
+  box-shadow:0 18px 46px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.045);
+  -webkit-backdrop-filter:blur(20px) saturate(125%);
+  backdrop-filter:blur(20px) saturate(125%);
+}
+html[data-ui="mobile"][data-theme="day"] .panel,
+html[data-ui="mobile"][data-theme="day"] .premium-panel,
+html[data-ui="mobile"][data-theme="day"] .mobile-record-card,
+html[data-ui="mobile"][data-theme="day"] .mobile-payment-card,
+html[data-ui="mobile"][data-theme="day"] .stat-card,
+html[data-ui="mobile"][data-theme="day"] .settings-card,
+html[data-ui="mobile"][data-theme="day"] .report-card {
+  color:#171719;
+  border-color:var(--mobile-line-day);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(255,255,255,.36) 58%),
+    var(--mobile-card-glass-day);
+  box-shadow:0 16px 40px rgba(58,47,30,.10), inset 0 1px 0 #fff;
+}
+html[data-ui="mobile"] .panel-header,
+html[data-ui="mobile"] .premium-panel-header { background:transparent !important; }
+
+/* Full-screen mobile forms are one continuous frosted workspace. */
+html[data-ui="mobile"] .modal-root {
+  background:
+    radial-gradient(circle at 14% 0,rgba(203,168,87,.13),transparent 32%),
+    rgba(0,0,0,.56);
+}
+html[data-ui="mobile"] .modal {
+  border:0;
+  background:
+    radial-gradient(circle at 12% 0,rgba(255,255,255,.065),transparent 28%),
+    linear-gradient(155deg,rgba(255,255,255,.025),transparent 46%),
+    rgba(9,9,12,.92);
+  -webkit-backdrop-filter:blur(30px) saturate(145%);
+  backdrop-filter:blur(30px) saturate(145%);
+}
+html[data-ui="mobile"] .modal-header,
+html[data-ui="mobile"] .modal-footer {
+  background:transparent !important;
+  box-shadow:none !important;
+  border-color:rgba(255,255,255,.09);
+  -webkit-backdrop-filter:blur(24px) saturate(140%);
+  backdrop-filter:blur(24px) saturate(140%);
+}
+html[data-ui="mobile"] .modal-header {
+  background:linear-gradient(180deg,rgba(9,9,12,.88),rgba(9,9,12,.48)) !important;
+}
+html[data-ui="mobile"] .modal-footer {
+  background:linear-gradient(0deg,rgba(9,9,12,.90),rgba(9,9,12,.48)) !important;
+}
+html[data-ui="mobile"] .unit-modal-body,
+html[data-ui="mobile"] .unit-tabs { background:transparent !important; }
+html[data-ui="mobile"][data-theme="day"] .modal-root {
+  background:
+    radial-gradient(circle at 14% 0,rgba(184,148,80,.16),transparent 32%),
+    rgba(42,35,25,.25);
+}
+html[data-ui="mobile"][data-theme="day"] .modal {
+  color:#171719;
+  background:
+    radial-gradient(circle at 12% 0,rgba(255,255,255,.98),transparent 30%),
+    linear-gradient(155deg,rgba(255,255,255,.86),rgba(255,255,255,.30) 55%),
+    rgba(245,242,235,.91);
+}
+html[data-ui="mobile"][data-theme="day"] .modal-header,
+html[data-ui="mobile"][data-theme="day"] .modal-footer {
+  color:#171719;
+  border-color:rgba(18,18,20,.10);
+}
+html[data-ui="mobile"][data-theme="day"] .modal-header {
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.54)) !important;
+}
+html[data-ui="mobile"][data-theme="day"] .modal-footer {
+  background:linear-gradient(0deg,rgba(255,255,255,.94),rgba(255,255,255,.52)) !important;
+}
+
+html[data-ui="mobile"] .account-menu,
+html[data-ui="mobile"] .notification-panel,
+html[data-ui="mobile"] .mobile-more-sheet {
+  border-radius:24px;
+  border-color:rgba(255,255,255,.16);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.065),transparent 48%),
+    rgba(10,10,13,.86);
+  box-shadow:0 30px 84px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.08);
+}
+html[data-ui="mobile"][data-theme="day"] .account-menu,
+html[data-ui="mobile"][data-theme="day"] .notification-panel,
+html[data-ui="mobile"][data-theme="day"] .mobile-more-sheet {
+  color:#171719;
+  border-color:rgba(255,255,255,.94);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.94),rgba(255,255,255,.38)),
+    rgba(255,255,255,.80);
+  box-shadow:0 26px 70px rgba(57,46,29,.20), inset 0 1px 0 #fff;
+}
+
+@media (max-height:690px) {
+  html[data-ui="mobile"] .login-card { margin:0; }
+  html[data-ui="mobile"] .login-panel { align-items:flex-start; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  html[data-ui="mobile"] .topbar,
+  html[data-ui="mobile"] .mobile-bottom-nav,
+  html[data-ui="mobile"] .mobile-fab { transition:none; }
+}
+
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))) {
+  html[data-ui="mobile"] .topbar,
+  html[data-ui="mobile"] .mobile-bottom-nav,
+  html[data-ui="mobile"] .modal,
+  html[data-ui="mobile"] .account-menu,
+  html[data-ui="mobile"] .notification-panel,
+  html[data-ui="mobile"] .mobile-more-sheet { background-color:#111114; }
+  html[data-ui="mobile"][data-theme="day"] .topbar,
+  html[data-ui="mobile"][data-theme="day"] .mobile-bottom-nav,
+  html[data-ui="mobile"][data-theme="day"] .modal,
+  html[data-ui="mobile"][data-theme="day"] .account-menu,
+  html[data-ui="mobile"][data-theme="day"] .notification-panel,
+  html[data-ui="mobile"][data-theme="day"] .mobile-more-sheet { background-color:#f8f6f1; }
+}
+
+/* Official SVGs keep their authored colors in both themes. */
+html[data-ui="mobile"] .brand-logo-img { filter:none !important; opacity:1; }
+
+/* Mobile metadata reads as deliberate label/value pairs. */
+html[data-ui="mobile"] .mobile-record-meta > span,
+html[data-ui="mobile"] .mobile-payment-meta > span {
+  display:grid;
+  gap:3px;
+  min-width:0;
+  text-transform:none;
+}
+html[data-ui="mobile"] .mobile-record-meta > span:last-child,
+html[data-ui="mobile"] .mobile-payment-meta > span:last-child { text-align:right; justify-items:end; }
+html[data-ui="mobile"] .mobile-record-meta small,
+html[data-ui="mobile"] .mobile-payment-meta small {
+  color:var(--text-faint);
+  font-size:.48rem;
+  font-weight:800;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+html[data-ui="mobile"] .mobile-record-meta b,
+html[data-ui="mobile"] .mobile-payment-meta b {
+  max-width:100%;
+  color:var(--text);
+  font-size:.66rem;
+  line-height:1.25;
+}
+html[data-ui="mobile"][data-theme="day"] .mobile-record-meta b,
+html[data-ui="mobile"][data-theme="day"] .mobile-payment-meta b { color:#262628; }
