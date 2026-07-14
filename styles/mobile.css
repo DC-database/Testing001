@@ -168,3 +168,79 @@
   .payment-schedule-panel .row-actions { justify-content:flex-start; }
   .payment-summary-grid { grid-template-columns:1fr 1fr; }
 }
+
+/* =========================================================
+   v0.7.2 MOBILE PORTRAIT REFINEMENT
+   ========================================================= */
+@media (max-width:760px) and (orientation:portrait){
+  html,body{max-width:100%;overflow-x:hidden}
+  .app-view{padding-bottom:calc(var(--mobile-nav-height) + 64px + env(safe-area-inset-bottom))}
+  .dashboard-section:last-child,.panel:last-child,.access-tab-panel:last-child{margin-bottom:24px}
+
+  .desktop-record-table{display:none!important}
+  .mobile-record-list{display:grid;gap:10px}
+  .unit-directory-panel .data-table-wrap{overflow:visible}
+  .unit-directory-header{padding-bottom:10px}
+  .unit-directory-header h3{font-size:1rem}
+  .unit-directory-header p,.unit-directory-help{display:none}
+  .portfolio-filter-summary{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+
+  .desktop-maintenance-trend{display:none!important}
+  .mobile-maintenance-trend{display:block}
+  .maintenance-cost-trend-chart .premium-panel-body{overflow:visible!important}
+  .maintenance-cost-trend-chart{min-width:0;overflow:hidden}
+  .maintenance-analytics-grid{grid-template-columns:1fr}
+  .maintenance-cost-property-chart .maintenance-cost-bars button{grid-template-columns:minmax(0,1fr) minmax(90px,.85fr)}
+
+  .desktop-lease-expiry{display:none!important}
+  .mobile-lease-expiry{display:block;padding:14px}
+  .dashboard-section-header .text-button{width:100%;text-align:left}
+
+  .toolbar{display:grid;grid-template-columns:1fr;gap:10px}
+  .toolbar .search-input{width:100%}
+  .segmented{display:flex;overflow-x:auto;scrollbar-width:none}
+  .segmented::-webkit-scrollbar{display:none}
+  .segmented button{flex:0 0 auto}
+
+  .premium-access-summary{grid-template-columns:1fr 1fr;gap:9px}
+  .premium-access-summary article{min-height:105px;padding:14px}
+  .access-tabs{margin-left:-2px;margin-right:-2px}
+  .access-tabs button{padding:10px 14px}
+  .access-panel-heading{align-items:flex-start}
+  .access-panel-heading .button{display:none}
+  .premium-user-row{grid-template-columns:auto minmax(0,1fr) auto;gap:11px;padding:14px}
+  .premium-user-identity{grid-column:2}
+  .premium-user-role,.premium-user-security{grid-column:2;display:flex;gap:6px;align-items:center}
+  .premium-user-role span,.premium-user-security span{font-size:.48rem}
+  .premium-user-role strong,.premium-user-security strong{font-size:.59rem}
+  .premium-user-row>.account-state{grid-column:3;grid-row:1}
+  .premium-user-row>[data-view-user]{grid-column:1 / -1;width:100%}
+  .premium-user-row>[data-user-menu]{display:none}
+  .premium-role-grid{grid-template-columns:1fr}
+  .premium-role-card{min-height:175px;padding:18px}
+  .permission-role-picker{width:100%}
+  .permission-group-list{grid-template-columns:1fr}
+  .permission-editor-head{align-items:flex-start;gap:10px}
+  .permission-editor-head>b{white-space:nowrap}
+  .premium-permission-row{min-height:62px}
+  .access-save-bar{position:sticky;bottom:calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));z-index:5;margin:0 -14px;padding:12px 14px;background:var(--surface);border-top:1px solid var(--line)}
+  .access-save-bar .button{flex:1}
+  .session-card{grid-template-columns:auto minmax(0,1fr) auto}
+  .session-card .button{grid-column:1 / -1;width:100%}
+  .access-activity-list>article{grid-template-columns:1fr;gap:6px}
+  .access-activity-list>article>b{text-align:left}
+  .user-profile-overview{grid-template-columns:auto minmax(0,1fr)}
+  .user-profile-overview>.account-state{grid-column:1 / -1;width:max-content}
+}
+
+@media (max-width:920px) and (orientation:landscape){
+  .mobile-record-list{display:none!important}
+  .desktop-record-table{display:block!important}
+  .desktop-record-table .data-table-wrap{overflow:auto}
+  .desktop-record-table .data-table{font-size:.64rem}
+  .desktop-record-table .data-table th,.desktop-record-table .data-table td{padding:9px 10px}
+  .desktop-maintenance-trend{display:grid}
+  .mobile-maintenance-trend{display:none}
+  .desktop-lease-expiry{display:grid!important}
+  .mobile-lease-expiry{display:none!important}
+}
