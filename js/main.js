@@ -4,12 +4,14 @@
   const root = window.RE59;
   const u = root.utils;
   const THEME_KEY = "59re.theme";
+  const SIDEBAR_KEY = "59re.sidebar.collapsed";
 
   document.addEventListener("DOMContentLoaded", boot);
 
   async function boot() {
     applyTheme("night", false);
     bindStaticEvents();
+    restoreSidebarState();
     root.ui.showLoading("Preparing local portfolio records…");
     try {
       await root.data.init();
@@ -55,6 +57,9 @@
 
     document.getElementById("logout-button").addEventListener("click", logout);
     document.getElementById("mobile-menu-button").addEventListener("click", () => document.body.classList.toggle("sidebar-open"));
+    document.getElementById("sidebar-collapse-button")?.addEventListener("click", () => {
+      applySidebarState(!document.body.classList.contains("sidebar-collapsed"));
+    });
     document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
     document.getElementById("quick-add-button").addEventListener("click", openQuickAdd);
     document.getElementById("presentation-button").addEventListener("click", () => {
@@ -117,6 +122,24 @@
     });
   }
 
+  function restoreSidebarState() {
+    const desktop = document.documentElement.dataset.ui === "desktop";
+    const collapsed = desktop && localStorage.getItem(SIDEBAR_KEY) === "true";
+    applySidebarState(collapsed, false);
+  }
+
+  function applySidebarState(collapsed, persist = true) {
+    const desktop = document.documentElement.dataset.ui === "desktop";
+    const resolved = desktop && Boolean(collapsed);
+    document.body.classList.toggle("sidebar-collapsed", resolved);
+    const button = document.getElementById("sidebar-collapse-button");
+    if (button) {
+      button.setAttribute("aria-expanded", String(!resolved));
+      button.setAttribute("aria-label", resolved ? "Expand navigation" : "Collapse navigation");
+      button.title = resolved ? "Expand navigation" : "Collapse navigation";
+    }
+    if (persist && desktop) localStorage.setItem(SIDEBAR_KEY, String(resolved));
+  }
 
   function applyTheme(theme, persist = true) {
     const resolved = theme === "night" ? "night" : "day";
