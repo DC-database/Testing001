@@ -24,12 +24,44 @@
   };
   const PROPERTY_PLACEHOLDER_LIST = Object.values(PROPERTY_PLACEHOLDERS);
 
-  function propertyImage(property) {
-    if (property?.coverImage) return property.coverImage;
+  const LEGACY_IMAGE_NAMES = {
+    "marina-tower-16.jpg": "assets/property-marina-tower-16.jpg",
+    "r19-tower.jpg": "assets/property-r19-tower.jpg",
+    "foxhills.jpg": "assets/property-foxhills.jpg",
+    "building-a29.jpg": "assets/property-building-a29.jpg",
+    "stand-alone-villas.jpg": "assets/property-stand-alone-villas.jpg",
+    "nb1-residence.jpg": "assets/property-nb1-residence.jpg",
+    "muntazah-building.jpg": "assets/property-muntazah-building.jpg",
+    "al-mansoura-46.jpg": "assets/property-al-mansoura-46.jpg",
+    "al-ghazal-compound.jpg": "assets/property-al-ghazal-compound.jpg",
+    "umm-ghuwailina-b5.jpg": "assets/property-umm-ghuwailina-b5.jpg",
+    "store-birkat-al-awamer.jpg": "assets/property-store-birkat-al-awamer.jpg"
+  };
+
+  function fallbackPropertyImage(property) {
     if (PROPERTY_PLACEHOLDERS[property?.id]) return PROPERTY_PLACEHOLDERS[property.id];
     const key = String(property?.id || property?.code || property?.name || "property");
     const hash = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
     return PROPERTY_PLACEHOLDER_LIST[hash % PROPERTY_PLACEHOLDER_LIST.length];
+  }
+
+  function propertyImage(property) {
+    const value = String(property?.coverImage || "").trim();
+    if (!value) return fallbackPropertyImage(property);
+    if (/^(data:|blob:|https?:)/i.test(value)) return value;
+    const clean = value.replace(/\\/g, "/").split(/[?#]/)[0];
+    const basename = clean.split("/").pop().toLowerCase();
+    return LEGACY_IMAGE_NAMES[basename] || (basename.startsWith("property-") ? `assets/${basename}` : fallbackPropertyImage(property));
+  }
+
+  function bindPropertyImageFallbacks(scope = document) {
+    scope.querySelectorAll("img[data-property-fallback]").forEach((image) => {
+      image.addEventListener("error", () => {
+        if (image.dataset.fallbackApplied === "true") return;
+        image.dataset.fallbackApplied = "true";
+        image.src = image.dataset.propertyFallback;
+      }, { once: true });
+    });
   }
 
   function readPropertyImage(file) {
@@ -125,7 +157,7 @@
 
       <article class="panel unit-directory-panel" id="unit-directory-panel">
         <header class="panel-header unit-directory-header">
-          <div><h3 id="unit-directory-title">All Units</h3><p id="unit-directory-subtitle">Every current unit in the portfolio.</p></div>
+          <div><h3 id="unit-directory-title">All Units</h3><p id="unit-directory-subtitle">Every current unit in the portfolio.</p></div><b id="unit-directory-count" class="unit-directory-count">0</b>
         </header>
         <div class="panel-body unit-directory-help">
           <div class="status-explanation" id="status-explanation"></div>
@@ -181,10 +213,12 @@
         return directPropertyMatch || matchingPropertyIds.has(property.id);
       });
 
-      view.querySelector("#property-grid").innerHTML = filteredProperties.map((property) => {
+      const propertyGrid = view.querySelector("#property-grid");
+      propertyGrid.innerHTML = filteredProperties.map((property) => {
         const count = matchingUnits.filter((unit) => unit.propertyId === property.id).length;
         return propertyCard(property, status, count);
       }).join("") || root.ui.emptyState("No matching properties", "Change the status tab or search text.");
+      bindPropertyImageFallbacks(propertyGrid);
 
       const filterName = statusLabel(status);
       const summary = status === "all"
@@ -194,6 +228,7 @@
       view.querySelector("#status-explanation").textContent = statusMessages[status] || statusMessages.all;
       view.querySelector("#unit-directory-title").textContent = status === "all" ? "All units" : `${filterName} units`;
       view.querySelector("#unit-directory-subtitle").textContent = `${matchingUnits.length} exact record${matchingUnits.length === 1 ? "" : "s"} shown below.`;
+      view.querySelector("#unit-directory-count").textContent = u.number(matchingUnits.length);
 
       view.querySelector("#portfolio-unit-table-body").innerHTML = matchingUnits.map((unit) => {
         const property = propertyMap.get(unit.propertyId);
@@ -252,7 +287,7 @@
     const rate = Math.max(0, Math.min(100, Number(property.occupancyRate || 0)));
     return `<article class="property-card property-photo-card" data-property-id="${property.id}">
       <div class="property-card-media">
-        <img src="${u.escapeHTML(propertyImage(property))}" alt="${u.escapeHTML(property.name)} property placeholder" loading="lazy">
+        <img src="${u.escapeHTML(propertyImage(property))}" data-property-fallback="${u.escapeHTML(fallbackPropertyImage(property))}" alt="${u.escapeHTML(property.name)} property" loading="lazy">
         <div class="property-card-media-shade"></div>
         <div class="property-card-heading">
           <div>
@@ -293,7 +328,7 @@
     view.innerHTML = `
       <div class="breadcrumb"><button data-back>Properties</button><span>/</span><span>${u.escapeHTML(property.name)}</span></div>
       <section class="property-hero property-hero-photo">
-        <img class="property-hero-image" src="${u.escapeHTML(propertyImage(property))}" alt="${u.escapeHTML(property.name)}">
+        <img class="property-hero-image" src="${u.escapeHTML(propertyImage(property))}" data-property-fallback="${u.escapeHTML(fallbackPropertyImage(property))}" alt="${u.escapeHTML(property.name)}">
         <div class="property-hero-shade"></div>
         <div class="property-hero-content">
           <div class="property-hero-top">
@@ -357,6 +392,7 @@
     };
 
     drawUnits();
+    bindPropertyImageFallbacks(view);
     view.querySelector("[data-back]").addEventListener("click", () => root.router.navigate("properties"));
     view.querySelector("[data-edit-property]")?.addEventListener("click", () => openPropertyForm(property));
     view.querySelector("[data-add-unit]")?.addEventListener("click", () => openUnitForm({ propertyId }));
@@ -376,13 +412,14 @@
       size: "medium",
       content: `<div class="photo-manager-list">
         ${properties.map((property) => `<button type="button" class="photo-manager-row" data-photo-property="${property.id}">
-          <img src="${u.escapeHTML(propertyImage(property))}" alt="">
+          <img src="${u.escapeHTML(propertyImage(property))}" data-property-fallback="${u.escapeHTML(fallbackPropertyImage(property))}" alt="">
           <span><strong>${u.escapeHTML(property.name)}</strong><small>${u.escapeHTML(property.code)} · ${u.escapeHTML(property.location || "Qatar")}</small></span>
           <b>Change photo →</b>
         </button>`).join("")}
       </div>`,
       footer: `<button class="button button-secondary" data-cancel>Close</button>`
     });
+    bindPropertyImageFallbacks(instance.modal);
     instance.modal.querySelector("[data-cancel]").addEventListener("click", instance.close);
     instance.modal.querySelectorAll("[data-photo-property]").forEach((button) => button.addEventListener("click", () => {
       const property = properties.find((item) => item.id === button.dataset.photoProperty);
@@ -404,13 +441,14 @@
         <label><span>Property Manager</span><input name="managerName" value="${u.escapeHTML(property?.managerName || "Property Manager")}"></label>
         <label class="span-2"><span>Description</span><textarea name="description">${u.escapeHTML(property?.description || "")}</textarea></label>
         <div class="span-2 property-photo-field">
-          <div class="property-photo-preview"><img data-property-photo-preview src="${u.escapeHTML(propertyImage(property || {}))}" alt="Property cover preview"></div>
+          <div class="property-photo-preview"><img data-property-photo-preview src="${u.escapeHTML(propertyImage(property || {}))}" data-property-fallback="${u.escapeHTML(fallbackPropertyImage(property || {}))}" alt="Property cover preview"></div>
           <label><span>Property cover photo</span><input name="coverPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WebP. The system stores a compressed local copy until Firebase Storage is connected.</small></label>
         </div>
       </form>`,
       footer: `<button class="button button-secondary" data-cancel>Cancel</button><button class="button button-primary" data-save>Save property</button>`
     });
     instance.modal.querySelector("[data-cancel]").addEventListener("click", instance.close);
+    bindPropertyImageFallbacks(instance.modal);
     const photoInput = instance.modal.querySelector("[name=coverPhoto]");
     photoInput?.addEventListener("change", async () => {
       const file = photoInput.files?.[0];

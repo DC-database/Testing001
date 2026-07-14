@@ -180,9 +180,10 @@
   function renderTable(jobs, snapshot, emptyTitle, emptyMessage) {
     return `<article class="premium-panel maintenance-table-panel">
       <header class="premium-panel-header"><div><span>MAINTENANCE REGISTER</span><h3>${u.number(jobs.length)} job${jobs.length === 1 ? "" : "s"}</h3></div></header>
-      <div class="data-table-wrap"><table class="data-table maintenance-table"><thead><tr><th>Job</th><th>Property / Unit</th><th>Work</th><th>Priority</th><th>Status</th><th>Schedule</th><th>Expected</th><th>Cost</th></tr></thead><tbody>
+      <div class="data-table-wrap desktop-record-table"><table class="data-table maintenance-table"><thead><tr><th>Job</th><th>Property / Unit</th><th>Work</th><th>Priority</th><th>Status</th><th>Schedule</th><th>Expected</th><th>Cost</th></tr></thead><tbody>
         ${jobs.map((job) => jobRow(job, snapshot)).join("") || `<tr><td colspan="8">${root.ui.emptyState(emptyTitle, emptyMessage)}</td></tr>`}
       </tbody></table></div>
+      <div class="mobile-record-list mobile-maintenance-job-list">${jobs.map((job) => compactJobCard(job, snapshot)).join("") || root.ui.emptyState(emptyTitle, emptyMessage)}</div>
     </article>`;
   }
 

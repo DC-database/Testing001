@@ -120,7 +120,8 @@
         <input id="payment-search" class="search-input" type="search" placeholder="Search tenant, property, unit, cheque or contract">
         <div id="payment-filter" class="segmented payment-status-tabs">${FILTERS.map(([status, label]) => `<button data-status="${status}" class="${requested === status ? "active" : ""}">${label}</button>`).join("")}</div>
       </div>
-      <article class="panel payment-schedule-panel"><div class="data-table-wrap"><table class="data-table mobile-card-table"><thead><tr><th>Tenant / Unit</th><th>Coverage</th><th>Due Date</th><th>Method</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody id="payment-table-body"></tbody></table></div></article>`;
+      <article class="panel payment-schedule-panel desktop-record-table"><div class="data-table-wrap"><table class="data-table"><thead><tr><th>Tenant / Unit</th><th>Coverage</th><th>Due Date</th><th>Method</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody id="payment-table-body"></tbody></table></div></article>
+      <section id="payment-mobile-list" class="mobile-record-list payment-mobile-list" aria-label="Payment schedule"></section>`;
 
     const draw = () => {
       const term = u.normalize(view.querySelector("#payment-search").value);
@@ -143,6 +144,21 @@
         const canUpdate = root.auth.can("payment") && (["cheque_received", "ready_to_deposit", "deposited", "returned", "auto_debit_failed"].includes(payment.status) || u.normalize(payment.expectedMethod).includes("cheque"));
         return `<tr data-payment-id="${payment.id}"><td data-label="Tenant / Unit"><div class="table-title">${u.escapeHTML(tenant?.name || "Tenant")}</div><div class="table-subtitle">${u.escapeHTML(property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</div></td><td data-label="Coverage">${u.date(payment.coverageStart)} – ${u.date(payment.coverageEnd)}</td><td data-label="Due Date"><strong>${u.date(payment.dueDate)}</strong></td><td data-label="Method"><div class="payment-method-cell">${paymentMethodLine(payment)}</div></td><td data-label="Due">${u.money(payment.amountDue)}</td><td data-label="Paid">${u.money(payment.amountPaid)}</td><td data-label="Balance"><strong>${u.money(payment.balance)}</strong></td><td data-label="Status"><span class="status-chip ${payment.status}">${u.titleCase(payment.status)}</span></td><td data-label="Actions"><div class="row-actions">${canRecord ? `<button class="button button-primary button-small" data-record-payment="${payment.id}">Record</button>` : ""}${canUpdate ? `<button class="button button-secondary button-small" data-update-payment="${payment.id}">Update</button>` : ""}${payment.receiptNumber ? `<button class="button button-secondary button-small" data-print-id="${payment.id}">${root.ui.documentActionText("Receipt", "Receipt PDF")}</button>` : ""}</div></td></tr>`;
       }).join("") || `<tr><td colspan="9">${root.ui.emptyState("No payment schedule records", "Change the search or payment-status filter.")}</td></tr>`;
+
+      view.querySelector("#payment-mobile-list").innerHTML = filtered.map((payment) => {
+        const unit = unitMap.get(payment.unitId);
+        const property = propertyMap.get(payment.propertyId);
+        const tenant = tenantMap.get(payment.tenantId);
+        const canRecord = root.auth.can("payment") && payment.balance > 0 && !["cancelled", "waived"].includes(payment.status);
+        const canUpdate = root.auth.can("payment") && (["cheque_received", "ready_to_deposit", "deposited", "returned", "auto_debit_failed"].includes(payment.status) || u.normalize(payment.expectedMethod).includes("cheque"));
+        const method = payment.method || payment.expectedMethod || "—";
+        return `<article class="mobile-payment-card" data-payment-card="${payment.id}">
+          <div class="mobile-payment-head"><span><b>${u.escapeHTML(property?.code || property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</b><small>${u.escapeHTML(tenant?.name || "Tenant")}</small></span><span class="status-chip ${payment.status}">${u.titleCase(payment.status)}</span></div>
+          <div class="mobile-payment-amount"><span><small>Balance</small><strong>${u.money(payment.balance)}</strong></span><span><small>Due</small><b>${u.date(payment.dueDate)}</b></span></div>
+          <div class="mobile-payment-meta"><span><small>Coverage</small><b>${u.date(payment.coverageStart)} – ${u.date(payment.coverageEnd)}</b></span><span><small>Method</small><b>${u.escapeHTML(method)}</b></span></div>
+          <div class="mobile-payment-actions">${canRecord ? `<button class="button button-primary" data-record-payment="${payment.id}">Record Payment</button>` : ""}${canUpdate ? `<button class="button button-secondary" data-update-payment="${payment.id}">Update Status</button>` : ""}${payment.receiptNumber ? `<button class="button button-secondary" data-print-id="${payment.id}">Receipt PDF</button>` : ""}</div>
+        </article>`;
+      }).join("") || root.ui.emptyState("No payment schedule records", "Change the search or payment-status filter.");
 
       view.querySelectorAll("[data-record-payment]").forEach((button) => button.addEventListener("click", () => {
         const payment = payments.find((row) => row.id === button.dataset.recordPayment);

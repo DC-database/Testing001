@@ -16,13 +16,16 @@
       </section>
       <article class="panel">
         <header class="panel-header"><div><h3>${u.number(snapshot.actions.length)} active actions</h3><p>Sorted by urgency and days remaining.</p></div></header>
-        <div class="data-table-wrap">
+        <div class="data-table-wrap desktop-record-table">
           <table class="data-table">
             <thead><tr><th>Priority</th><th>Action</th><th>Record</th><th>Timing / Impact</th><th></th></tr></thead>
             <tbody>
               ${snapshot.actions.map((item) => `<tr class="clickable" data-unit-id="${item.unitId}"><td><span class="status-chip ${item.severity === "danger" ? "expired" : "expiring"}">${item.severity === "danger" ? "Urgent" : "Attention"}</span></td><td><div class="table-title">${u.escapeHTML(item.title)}</div></td><td>${u.escapeHTML(item.detail)}</td><td>${u.escapeHTML(item.meta)}</td><td>Open →</td></tr>`).join("") || `<tr><td colspan="5">${root.ui.emptyState("No actions", "The current records have no open actions.")}</td></tr>`}
             </tbody>
           </table>
+        </div>
+        <div class="mobile-record-list action-mobile-list">
+          ${snapshot.actions.map((item) => `<button type="button" class="mobile-record-card action-mobile-card" data-unit-id="${item.unitId}"><span class="mobile-record-top"><b>${u.escapeHTML(item.detail)}</b><span class="status-chip ${item.severity === "danger" ? "expired" : "expiring"}">${item.severity === "danger" ? "Urgent" : "Attention"}</span></span><strong>${u.escapeHTML(item.title)}</strong><span class="mobile-record-meta"><span>Timing / Impact</span><b>${u.escapeHTML(item.meta)}</b></span><span class="mobile-record-bottom"><b>Open record</b><i>View →</i></span></button>`).join("") || root.ui.emptyState("No actions", "The current records have no open actions.")}
         </div>
       </article>`;
 

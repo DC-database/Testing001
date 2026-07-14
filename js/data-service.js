@@ -12,6 +12,66 @@
     };
   }
 
+
+  const PROPERTY_IMAGE_BY_ID = {
+    "property-r16": "assets/property-marina-tower-16.jpg",
+    "property-r19": "assets/property-r19-tower.jpg",
+    "property-foxhills": "assets/property-foxhills.jpg",
+    "property-a29": "assets/property-building-a29.jpg",
+    "property-villas": "assets/property-stand-alone-villas.jpg",
+    "property-nb1": "assets/property-nb1-residence.jpg",
+    "property-muntazah": "assets/property-muntazah-building.jpg",
+    "property-mansoura": "assets/property-al-mansoura-46.jpg",
+    "property-ghazal": "assets/property-al-ghazal-compound.jpg",
+    "property-umm": "assets/property-umm-ghuwailina-b5.jpg",
+    "property-store": "assets/property-store-birkat-al-awamer.jpg"
+  };
+
+  const LEGACY_PROPERTY_IMAGE_NAMES = {
+    "marina-tower-16.jpg": "assets/property-marina-tower-16.jpg",
+    "r19-tower.jpg": "assets/property-r19-tower.jpg",
+    "foxhills.jpg": "assets/property-foxhills.jpg",
+    "building-a29.jpg": "assets/property-building-a29.jpg",
+    "stand-alone-villas.jpg": "assets/property-stand-alone-villas.jpg",
+    "nb1-residence.jpg": "assets/property-nb1-residence.jpg",
+    "muntazah-building.jpg": "assets/property-muntazah-building.jpg",
+    "al-mansoura-46.jpg": "assets/property-al-mansoura-46.jpg",
+    "al-ghazal-compound.jpg": "assets/property-al-ghazal-compound.jpg",
+    "umm-ghuwailina-b5.jpg": "assets/property-umm-ghuwailina-b5.jpg",
+    "store-birkat-al-awamer.jpg": "assets/property-store-birkat-al-awamer.jpg",
+    "property-marina-tower-16.jpg": "assets/property-marina-tower-16.jpg",
+    "property-r19-tower.jpg": "assets/property-r19-tower.jpg",
+    "property-foxhills.jpg": "assets/property-foxhills.jpg",
+    "property-building-a29.jpg": "assets/property-building-a29.jpg",
+    "property-stand-alone-villas.jpg": "assets/property-stand-alone-villas.jpg",
+    "property-nb1-residence.jpg": "assets/property-nb1-residence.jpg",
+    "property-muntazah-building.jpg": "assets/property-muntazah-building.jpg",
+    "property-al-mansoura-46.jpg": "assets/property-al-mansoura-46.jpg",
+    "property-al-ghazal-compound.jpg": "assets/property-al-ghazal-compound.jpg",
+    "property-umm-ghuwailina-b5.jpg": "assets/property-umm-ghuwailina-b5.jpg",
+    "property-store-birkat-al-awamer.jpg": "assets/property-store-birkat-al-awamer.jpg"
+  };
+
+  function canonicalPropertyImage(property) {
+    const value = String(property?.coverImage || "").trim();
+    if (!value) return PROPERTY_IMAGE_BY_ID[property?.id] || "";
+    if (/^(data:|blob:|https?:)/i.test(value)) return value;
+    const clean = value.replace(/\\/g, "/").split(/[?#]/)[0];
+    const basename = clean.split("/").pop().toLowerCase();
+    return LEGACY_PROPERTY_IMAGE_NAMES[basename] || PROPERTY_IMAGE_BY_ID[property?.id] || value;
+  }
+
+  async function migrateLegacyPropertyImages() {
+    const properties = await db.getAll("properties");
+    const updates = properties.map((property) => {
+      const next = canonicalPropertyImage(property);
+      if (!next || next === property.coverImage) return null;
+      return { ...property, coverImage: next, updatedAt: Date.now(), imagePathMigratedAt: Date.now() };
+    }).filter(Boolean);
+    if (updates.length) await db.bulkPut("properties", updates);
+    return updates.length;
+  }
+
   const PAYMENT_TERMINAL_STATUSES = new Set(["paid", "cleared", "cancelled", "waived"]);
   const PAYMENT_MANUAL_STATUSES = new Set(["cheque_received", "ready_to_deposit", "deposited", "returned", "auto_debit_failed", "partially_paid"]);
 
@@ -249,6 +309,7 @@
         if (counter) await db.put("settings", counter);
       }
     }
+    await migrateLegacyPropertyImages();
     await ensurePaymentSchedules();
     return true;
   }

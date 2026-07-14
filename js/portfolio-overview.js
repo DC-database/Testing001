@@ -39,11 +39,11 @@
 
 
   function maintenanceTrendSvg(rows, maxValue) {
-    const width = 640;
-    const height = 170;
-    const padX = 18;
-    const padTop = 16;
-    const padBottom = 32;
+    const width = 360;
+    const height = 154;
+    const padX = 14;
+    const padTop = 14;
+    const padBottom = 30;
     const chartHeight = height - padTop - padBottom;
     const usableWidth = width - padX * 2;
     const points = rows.map((row, index) => {
@@ -59,7 +59,7 @@
         <line x1="${padX}" y1="${padTop + chartHeight}" x2="${padX + usableWidth}" y2="${padTop + chartHeight}" class="mobile-trend-axis"/>
         ${area ? `<polygon points="${area}" fill="url(#maintenance-area-gradient)"/>` : ""}
         <polyline points="${line}" class="mobile-trend-line"/>
-        ${points.map((point, index) => `<g class="mobile-trend-point"><circle cx="${point.x}" cy="${point.y}" r="4"><title>${u.escapeHTML(point.fullLabel)} · ${u.money(point.cost)}</title></circle>${index % 2 === 0 || index === points.length - 1 ? `<text x="${point.x}" y="${height - 8}" text-anchor="middle">${u.escapeHTML(point.label)}</text>` : ""}</g>`).join("")}
+        ${points.map((point, index) => `<g class="mobile-trend-point"><circle cx="${point.x}" cy="${point.y}" r="3.5"><title>${u.escapeHTML(point.fullLabel)} · ${u.money(point.cost)}</title></circle>${index % 2 === 0 || index === points.length - 1 ? `<text x="${point.x}" y="${height - 8}" text-anchor="middle">${u.escapeHTML(point.label)}</text>` : ""}</g>`).join("")}
       </svg>
     </div>`;
   }
