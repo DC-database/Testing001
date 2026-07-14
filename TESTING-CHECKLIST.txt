@@ -1,86 +1,61 @@
-59 REAL ESTATE · v0.7.0 TESTING BEFORE HANDOVER
+59 REAL ESTATE v0.7.2 — TESTING CHECKLIST
 
-Testing must be completed before final handover and live business use.
+BASE
+[ ] v0.7.1 was working before applying this patch.
+[ ] All patch files were uploaded to the correct paths.
+[ ] Browser cache was refreshed.
 
-A. BRANDING AND UI
-[ ] Login uses the official 59 SVG and REAL ESTATE SVG.
-[ ] Sidebar logo is clear, correctly spaced and not recreated as normal text.
-[ ] Properties & Units has no unnecessary explanatory heading text.
-[ ] Portfolio Overview shows Maintenance Operation, Property Performance and Action Required as clean titles.
-[ ] Lease Expiry Calendar shows “Next 12 months of revenue risk.” beneath the title.
-[ ] Desktop and mobile layouts have no overflow or unreadable controls.
+MOBILE PORTRAIT — PORTFOLIO OVERVIEW
+[ ] Monthly Maintenance Cost Trend fits completely inside the screen.
+[ ] All 12 months are represented in the trend.
+[ ] No right-side month is cut off.
+[ ] Lease Expiry Calendar shows 6 months initially.
+[ ] View full 12-month timeline opens all months.
+[ ] Page content does not sit behind the bottom navigation.
 
-B. MAINTENANCE ANALYTICS
-[ ] Maintenance Cost by Property is visible.
-[ ] Monthly Maintenance Cost Trend is visible.
-[ ] Chart totals match completed maintenance records.
-[ ] Opening a property from the cost chart works.
-[ ] Monthly and yearly maintenance totals are correct.
+MOBILE PORTRAIT — PROPERTIES & UNITS
+[ ] Unit Directory displays cards, not a cut desktop table.
+[ ] No horizontal scrolling is required.
+[ ] Cards show Property/Unit, status, rent and relevant tenant/unit information.
+[ ] Tapping a card opens the unit folder.
+[ ] Occupied, Booked, Ready, Inspection and Maintenance filters still work.
 
-C. ADMINISTRATOR IMPORT SECURITY
-[ ] Administrator can see Settings → Data Management.
-[ ] Administrator can download and validate the import template.
-[ ] Property Manager cannot see Import Portfolio in toolbar, + New or mobile actions.
-[ ] Property Manager cannot open the import route directly.
-[ ] CEO cannot open the import route.
-[ ] Replace Portfolio and Restore Backup show strong confirmation warnings.
+MOBILE PORTRAIT — LEASES
+[ ] Lease records display as cards.
+[ ] No horizontal scrolling is required.
+[ ] Property/Unit, tenant, status, end/timing and QAR rent are visible.
+[ ] Tapping a card opens the lease/unit record.
 
-D. PAYMENT SCHEDULE CALCULATION
-Test lease: Start 14 July 2026, End 13 July 2027, Monthly, 12 installments.
-[ ] Schedule creates 14 Jul 2026, 14 Aug 2026, 14 Sep 2026 and continues monthly.
-[ ] July installment covers 14 Jul–13 Aug.
-[ ] August installment covers 14 Aug–13 Sep.
-[ ] Paying August on 15 Aug records one day late.
-[ ] September remains due on 14 Sep, not 15 Sep.
-[ ] Early payment also does not move future due dates.
-[ ] Quarterly, semiannual and annual schedules calculate correctly.
-[ ] Custom first due date is respected.
-[ ] Grace days affect overdue status but do not change contractual due dates.
+MOBILE PORTRAIT — TENANTS
+[ ] Tenant records display as cards.
+[ ] No horizontal scrolling is required.
+[ ] Tenant, Property/Unit, status, lease timing and contact are visible.
+[ ] Tapping a current tenant opens the unit record.
 
-E. POST-DATED CHEQUES
-[ ] Cheque registration records cheque number, bank and cheque date.
-[ ] Registered cheque is not counted as collected revenue.
-[ ] Cheque appears in Ready to Deposit at the correct time.
-[ ] Deposited cheque remains awaiting clearance.
-[ ] Cleared cheque becomes paid and generates a receipt.
-[ ] Returned cheque remains in history and becomes outstanding.
-[ ] Returned cheque can be settled by cash/card/transfer/replacement cheque.
-[ ] Original returned cheque history remains visible after settlement.
+LANDSCAPE / DESKTOP
+[ ] Detailed tables return in landscape orientation.
+[ ] Desktop Properties, Leases and Tenants tables remain complete.
+[ ] Desktop official Print actions remain available.
 
-F. OTHER PAYMENTS
-[ ] Cash payment records actual paid date and receipt.
-[ ] Card payment records transaction reference.
-[ ] Bank transfer records reference.
-[ ] Auto-debit remains pending until confirmed.
-[ ] Failed auto-debit appears as urgent outstanding.
-[ ] Partial payment leaves the correct balance.
-[ ] Receipt cancellation/reissue history remains traceable where used.
+MOBILE DOCUMENTS
+[ ] Reports show Generate PDF, not Print.
+[ ] Contract register shows PDF wording.
+[ ] Payment schedule shows PDF wording.
+[ ] Receipt actions show PDF wording.
+[ ] Opening a mobile document shows PDF-ready preview and Save PDF.
+[ ] Desktop still opens the official print workflow.
 
-G. REPORTS AND PRINT
-[ ] Payment Schedule print shows fixed due dates and coverage periods.
-[ ] Payment & Receipt Register shows due, paid and balance separately.
-[ ] QAR appears throughout; no dollar currency appears.
-[ ] Actual 59 Real Estate branding appears on print output.
-[ ] Lease, receipt and report pages print without the app navigation.
+USERS & ACCESS — DESKTOP
+[ ] Summary cards are clean and aligned.
+[ ] Users, Roles, Permissions, Sessions and Activity tabs work.
+[ ] View Access opens the selected user details.
+[ ] Role cards open the correct permission editor.
+[ ] Permission changes save correctly.
+[ ] Import remains fixed to Administrator only.
+[ ] Disable/enable account requires confirmation.
 
-H. MOBILE
-[ ] Bottom navigation shows Home, Properties, Maintenance, Financials and More.
-[ ] New Tenant & Lease is usable as a full mobile workflow.
-[ ] Replace Tenant preserves historical tenant and lease records.
-[ ] Payment schedule is shown as mobile cards, not a squeezed desktop table.
-[ ] Maintenance field actions are touch friendly.
-[ ] Property Manager has no mobile import action.
-
-I. FIREBASE / FINAL GO-LIVE (LATER)
-[ ] Development Firebase project is connected first.
-[ ] Authentication and roles are confirmed.
-[ ] Realtime Database rules start closed and enforce roles.
-[ ] Storage rules protect contracts, IDs and photos.
-[ ] App Check is enabled.
-[ ] Real Excel data is validated before import.
-[ ] Demo data is removed only after real totals are verified.
-[ ] CEO and Property Manager acceptance testing is signed off.
-[ ] Production backup and restore procedure is tested.
-
-HANDOVER RULE
-Do not mark the system final or live until all relevant items above pass and the authorized users approve the results.
+USERS & ACCESS — MOBILE
+[ ] User cards fit without horizontal scrolling.
+[ ] Access tabs can be swiped horizontally.
+[ ] Permission groups open as accordions.
+[ ] Save Changes remains reachable above the bottom navigation.

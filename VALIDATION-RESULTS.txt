@@ -1,18 +1,19 @@
-59 REAL ESTATE · v0.7.0 AUTOMATED VALIDATION RESULTS
+59 REAL ESTATE v0.7.2 — VALIDATION RESULTS
 
 PASSED
-- JavaScript syntax check: all js/*.js files.
-- CSS brace integrity: main.css, components.css, mobile.css and print.css.
-- Payment schedule generation: 12 monthly installments from 14 Jul 2026 to 14 Jun 2027.
-- Fixed-date rule: payment made 15 Aug 2026 did not move the next due date from 14 Sep 2026.
-- Post-dated cheque registration: not marked paid on receipt.
-- Cheque clearance: marked cleared and receipt generated.
-- Role access: CEO and Property Manager denied import; Administrator allowed import.
-- CSV template parse and validation.
-- Excel import template formula-error scan: no formula errors found.
+- JavaScript syntax check passed for every file in js/.
+- version.json reports 0.7.2.
+- index.html cache versions were updated for every changed JavaScript and CSS file.
+- Mobile maintenance trend exists as a responsive SVG line/area chart.
+- Mobile lease expiry preview is limited to 6 months with a full 12-month action.
+- Properties & Units includes a dedicated portrait mobile record list.
+- Leases includes a dedicated portrait mobile card list.
+- Tenants includes a dedicated portrait mobile card list.
+- Users & Access includes Users, Roles, Permissions, Sessions and Activity tabs.
+- Mobile documents use PDF wording and open a PDF-ready preview rather than auto-printing.
+- Portrait mobile CSS blocks page-level horizontal overflow.
+- Landscape CSS restores detailed desktop tables.
+- Administrator-only import behavior remains unchanged.
 
-MANUAL BROWSER / USER ACCEPTANCE TESTING STILL REQUIRED
-- Visual rendering on the exact desktop and mobile devices used by 59 Real Estate.
-- Print/PDF output from the production browser and printer.
-- Real-data totals and migration verification.
-- Firebase security, authentication, Storage Rules and App Check.
+NOTE
+A final visual check should still be completed on the actual target phones because browser font rendering, safe-area insets and device aspect ratios can vary.

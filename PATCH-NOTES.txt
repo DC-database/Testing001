@@ -1,24 +1,74 @@
-59 REAL ESTATE PATCH v0.7.1
-Applies to: v0.7.0
+59 REAL ESTATE — PATCH v0.7.2
+Applies to: v0.7.1
+Build type: Patch only
 
-FIXED
-- Official 59 and REAL ESTATE SVG logos now render as direct <img> elements.
-- Removed reliance on external SVG CSS masks, which can appear blank when the system is opened locally or when a browser blocks mask loading.
-- 59 logo uses the exact supplied SVG geometry with gold fill.
-- REAL ESTATE uses the exact supplied SVG wordmark.
-- Updated login, sidebar, mobile header, loading screen, favicon, and print branding.
+PURPOSE
+This patch completes the mobile portrait refinement discussed after v0.7.1 and rebuilds Users & Access into a cleaner premium administration area.
+
+WHAT CHANGED
+1. Portfolio Overview — mobile analytics
+   - Monthly Maintenance Cost Trend now uses a responsive 12-month line/area chart in portrait.
+   - No chart width extends beyond the phone screen.
+   - Lease Expiry Calendar shows the next 6 months in portrait.
+   - A View full 12-month timeline button opens the complete timeline.
+   - Desktop continues to show the full 12-month table and chart.
+   - Added extra safe spacing above the fixed mobile bottom navigation.
+
+2. Properties & Units — mobile directory
+   - Removed the wide desktop table from portrait mobile view.
+   - Added touch-friendly unit cards showing Property/Unit, tenant or unit type, status, rent and lease end.
+   - No horizontal scrolling is required in portrait.
+   - Landscape view keeps the detailed table.
+
+3. Leases — mobile layout
+   - Replaced the wide portrait table with compact lease cards.
+   - Cards show Property/Unit, tenant, lease end/timing, status and QAR rent.
+   - Full detailed table remains available in landscape and desktop.
+
+4. Tenants — mobile layout
+   - Replaced the wide portrait table with tenant cards.
+   - Cards show tenant, Property/Unit, status, lease timing, contact and QAR rent when available.
+   - Full detailed table remains available in landscape and desktop.
+
+5. Mobile PDF / desktop official printing
+   - Mobile no longer displays actions labelled Print.
+   - Mobile actions are labelled PDF or Generate PDF.
+   - Mobile opens a PDF-ready official document preview with Save PDF.
+   - Desktop keeps official printing with the approved 59 Real Estate header and footer.
+
+6. Users & Access redesign
+   - Added premium summary cards.
+   - Added Users, Roles, Permissions, Sessions and Activity tabs.
+   - Replaced the crowded user/permission layout with clean user rows, role cards and grouped permission accordions.
+   - Mobile uses stacked user cards and touch-friendly permission toggles.
+   - Dangerous account actions remain behind confirmation.
+   - Portfolio import remains Administrator-only.
 
 CHANGED FILES
 - index.html
 - version.json
-- styles/main.css
-- styles/mobile.css
+- js/app-state.js
 - js/ui.js
-- assets/59.svg
-- assets/RE.svg
+- js/portfolio-overview.js
+- js/properties-units.js
+- js/leases.js
+- js/tenants.js
+- js/users-access.js
+- js/reports.js
+- js/action-center.js
+- js/financials.js
+- js/unit-detail.js
+- styles/components.css
+- styles/mobile.css
 
 INSTALLATION
-1. Apply this only after v0.7.0.
-2. Replace the listed files in their matching locations.
-3. Keep the flat js/, styles/, and assets/ structure.
-4. Refresh with Ctrl+F5.
+1. Confirm the current base is v0.7.1.
+2. Back up the current GitHub files.
+3. Upload only the files in this patch, preserving the js/ and styles/ paths.
+4. Replace files when GitHub asks.
+5. Do not delete or re-upload unchanged assets or data files.
+6. Open the deployed site and press Ctrl+F5 on desktop.
+7. On mobile, close and reopen the browser tab or clear the site cache if the old layout remains.
+
+IMPORTANT
+This patch does not change the Firebase plan, data structure, tenant records, payment schedules or maintenance records. It changes presentation, mobile behavior and document actions only.
