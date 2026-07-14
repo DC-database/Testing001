@@ -1,0 +1,24 @@
+59 Real Estate Property Image Asset Repair
+Applies to: v0.7.2
+
+Cause:
+The v0.7.2 patch did not include the unchanged property JPG files. They must remain from the v0.6.0 full build. If they were not uploaded to GitHub, the Properties cards show blank/missing images.
+
+Upload the contents of this assets folder into the existing repository path:
+assets/
+
+Do not create another nested folder. The final paths must look exactly like:
+assets/property-marina-tower-16.jpg
+assets/property-r19-tower.jpg
+assets/property-foxhills.jpg
+assets/property-building-a29.jpg
+assets/property-stand-alone-villas.jpg
+assets/property-nb1-residence.jpg
+assets/property-muntazah-building.jpg
+assets/property-al-mansoura-46.jpg
+assets/property-al-ghazal-compound.jpg
+assets/property-umm-ghuwailina-b5.jpg
+assets/property-store-birkat-al-awamer.jpg
+
+GitHub Pages filenames are case-sensitive. Keep every filename lowercase exactly as supplied.
+After upload, wait for GitHub Pages deployment, then refresh with Ctrl+F5.
