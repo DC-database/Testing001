@@ -1,13 +1,62 @@
-59 Real Estate v0.8.1 Logo Test
+59 REAL ESTATE v0.8.6 — TESTING CHECKLIST
+Base: v0.8.5
 
-1. Upload every patch file over v0.8.0 using the included folder structure.
-2. Wait for GitHub Pages deployment to finish.
-3. Open the live site and press Ctrl+F5 in Chrome.
-4. Desktop sidebar: confirm 59 and REAL ESTATE appear on one horizontal line.
-5. Desktop login: confirm the full logo is proportional and centered.
-6. Mobile login: confirm the full horizontal logo fits without extending beyond the screen.
-7. Mobile header: confirm the compact horizontal logo remains on one line beside the page title.
-8. Switch Night/Day inside the app:
-   - Night: gold 59 + white REAL ESTATE.
-   - Day: gold 59 + dark REAL ESTATE.
-9. Resize/rotate the phone: the logo must never stack.
+DESKTOP — NIGHT
+[ ] Sidebar appears as a floating smoked-glass panel.
+[ ] Official horizontal 59 Real Estate logo is clearly visible.
+[ ] Active navigation is readable on the gold surface.
+[ ] Top bar is a separate floating glass surface.
+[ ] Panels remain readable and do not become transparent enough to lose data.
+
+DESKTOP — DAY
+[ ] Sidebar becomes frosted white/light instead of remaining black.
+[ ] Logo retains its authored gold and dark wordmark colors.
+[ ] Inactive navigation is readable.
+[ ] Active navigation retains dark readable text on gold.
+[ ] Top bar, menus and panels are light and clearly separated.
+
+COLLAPSIBLE NAVIGATION
+[ ] Click the circular arrow beside the sidebar.
+[ ] Sidebar becomes a slim icon rail.
+[ ] Official 59.svg mark remains at the top.
+[ ] Navigation icons remain usable; browser title tooltips identify them.
+[ ] Maintenance count remains visible.
+[ ] Click again to restore the full sidebar.
+[ ] Refresh the page and confirm the chosen sidebar state is remembered.
+
+UNIT FOLDER / MODALS
+[ ] Open any unit.
+[ ] Header does not appear as a separate flat white or black slab.
+[ ] Header, tabs and body read as one continuous glass surface.
+[ ] Close button is visible and readable.
+[ ] Tabs remain transparent with a gold active underline.
+[ ] Repeat in Day and Night modes.
+[ ] Test Add Tenant, Record Payment and Maintenance Job modals.
+
+MOBILE — PORTRAIT
+[ ] Top bar floats inside the phone screen without overflow.
+[ ] Bottom navigation is a floating rounded glass bar.
+[ ] No horizontal page scrolling.
+[ ] Property, lease, tenant and maintenance records remain card based.
+[ ] Floating New button stays above the bottom navigation.
+[ ] Account and notification panels remain readable.
+
+MOBILE — DAY / NIGHT
+[ ] Day mode top and bottom navigation are truly light.
+[ ] Night mode top and bottom navigation are truly dark.
+[ ] Theme control remains readable in the account panel.
+[ ] Full-screen forms are continuous glass workspaces.
+[ ] Form fields and sticky actions remain usable when the keyboard opens.
+
+ROLES / FUNCTIONALITY
+[ ] CEO routes and read-only restrictions are unchanged.
+[ ] Property Manager create/edit access is unchanged.
+[ ] Administrator Users & Access and Data Management permissions are unchanged.
+[ ] Search, notifications, quick New and navigation still work.
+[ ] No existing local records are lost.
+
+BROWSERS
+[ ] Chrome desktop: Ctrl + F5 after deployment.
+[ ] Edge desktop: confirm the same layout.
+[ ] Chrome mobile or Android browser: test portrait.
+[ ] iPhone Safari, when available: verify safe-area spacing.

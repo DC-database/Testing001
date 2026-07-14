@@ -1,12 +1,32 @@
-59 REAL ESTATE v0.8.0 — STATIC VALIDATION RESULTS
+59 REAL ESTATE v0.8.6 — VALIDATION RESULTS
 
 PASSED
-- JavaScript syntax check completed for every JS file in the cumulative build.
-- HTML parser check completed for index.html.
-- CSS parser check completed with zero parse errors for main.css, components.css, mobile-app.css and print.css.
-- All local script, stylesheet and logo references in index.html resolve to existing files in the cumulative build.
-- All 11 legacy property-image aliases exist and contain image data.
-- Patch file layout uses only the existing flat js/, styles/ and assets/ folders.
+- js/main.js syntax validation with node --check.
+- js/app-state.js syntax validation with node --check.
+- desktop-luxury.css parsed with tinycss2: 0 stylesheet parse errors.
+- mobile-luxury.css parsed with tinycss2: 0 stylesheet parse errors.
+- index.html duplicate ID scan: 0 duplicate IDs.
+- All stylesheet and script paths referenced by index.html exist in the working build.
+- Patch file list verified against v0.8.5.
+- ZIP integrity test passed.
 
-IMPORTANT VISUAL VALIDATION NOTE
-The execution environment used to assemble this patch blocks local browser preview through its network policy. Therefore, final visual behavior was not claimed from an emulated browser screenshot. The supplied TESTING-CHECKLIST.txt must be completed on the real GitHub Pages site and on actual mobile devices before accepting the patch for production.
+RENDER REVIEW COMPLETED
+Static browser renders were produced from the real v0.8.6 HTML and complete CSS
+stack for:
+- Desktop Night shell.
+- Desktop Day shell.
+- Desktop Night Unit Folder modal.
+- Desktop collapsed icon rail.
+- Mobile Day app shell.
+
+The renders confirmed:
+- The official SVG is visible in Day and Night.
+- Desktop Day sidebar is genuinely light.
+- Unit Folder header and body are visually continuous.
+- Collapsed navigation retains the official mark and usable icons.
+- Mobile navigation and cards remain inside portrait width.
+
+LIVE TEST STILL REQUIRED
+IndexedDB interaction and real route content must be checked after deployment using
+the supplied testing checklist. Static validation cannot replace testing with the
+user's live browser data and device safe areas.

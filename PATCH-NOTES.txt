@@ -1,21 +1,62 @@
-59 Real Estate v0.8.1 · Definitive Horizontal Logo Lockup
-Base required: v0.8.0
+59 REAL ESTATE — PATCH v0.8.6
+Base required: v0.8.5
+Patch type: Luxury Glass Shell / Separate Desktop & Mobile Identities
 
-Changed files:
-- index.html
-- styles/main.css
-- styles/mobile-app.css
-- assets/logo-horizontal-night.svg (new)
-- assets/logo-horizontal-light.svg (new)
-- version.json
+PURPOSE
+This patch is the controlled premium visual refinement requested after v0.8.5.
+Desktop and mobile now have separate device-scoped presentation layers. They
+continue sharing the same data, authentication, permissions and business logic.
 
-Fixes:
-- Replaces the two independently positioned 59.svg and RE.svg images with one composed official horizontal logo asset.
-- Prevents the 59 mark from appearing above REAL ESTATE.
-- Locks the mark and wordmark to a coordinated, proportional single line.
-- Uses a gold 59 mark with a white wordmark in Night mode.
-- Uses a gold 59 mark with a dark wordmark in Day mode.
-- Applies the same correct lockup to desktop sidebar, desktop login, mobile login and mobile header.
-- Adds cache-busting v0.8.1 URLs for the changed logo and style files.
+DESKTOP LUXURY IDENTITY
+- Floating smoked-glass navigation in Night mode.
+- True frosted-light navigation in Day mode; the sidebar no longer remains dark.
+- Added a smooth collapsible icon rail. The selected state is remembered locally.
+- The official horizontal 59 Real Estate SVG stays visible in both themes.
+- Collapsed mode uses the official 59.svg mark, not typed text.
+- Floating glass top bar with clearer separation from the workspace.
+- Refined gold active navigation treatment and readable inactive states.
+- Portfolio snapshot now belongs visually to the same glass shell.
+- Main panels use restrained glass depth while dense data remains readable.
 
-Upload the files using the same folder structure. Do not place the assets inside an extra assets/assets folder.
+MODALS / UNIT FOLDER
+- Unit Folder header, tabs, body and footer now form one continuous glass shell.
+- Removed the disconnected flat white/dark header slab.
+- Close button, dividers and internal surfaces use the same visual language.
+- Day mode uses frosted white glass and dark text.
+- Night mode uses smoked glass and light text.
+- Search, account and notification panels match the shell.
+
+MOBILE LUXURY IDENTITY
+- Mobile remains a separate app presentation, not a reduced desktop page.
+- Floating mobile top bar and bottom navigation.
+- Day mode now uses genuinely light navigation surfaces.
+- Night mode uses smoked-glass navigation surfaces.
+- Touch cards, payment cards and panels use mobile-specific glass styling.
+- Full-screen mobile forms remain touch-first but now use a continuous glass shell.
+- Mobile metadata label/value spacing was improved.
+- Safe-area and portrait behavior remain intact.
+
+TECHNICAL
+- New: styles/desktop-luxury.css
+- New: styles/mobile-luxury.css
+- Updated: index.html
+- Updated: js/main.js
+- Updated: js/app-state.js
+- Updated: version.json
+- No IndexedDB schema change.
+- No property, tenant, lease, payment or maintenance data migration.
+- No Firebase configuration change.
+
+INSTALLATION
+Upload every file in this patch over the matching path in the existing v0.8.5
+repository. Do not create an extra parent folder.
+
+Correct examples:
+  index.html
+  version.json
+  js/main.js
+  js/app-state.js
+  styles/desktop-luxury.css
+  styles/mobile-luxury.css
+
+After deployment, use Ctrl + F5 in Chrome.

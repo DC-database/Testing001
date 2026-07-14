@@ -1,3 +1,11 @@
-Apply this patch only after v0.8.0.
+59 Real Estate v0.8.6 Patch
 
-Copy the contents into the live project root and allow replacement of index.html, main.css, mobile-app.css and version.json. Add both new SVG files to assets/.
+Apply only over v0.8.5.
+Upload the files using the exact folder structure shown in this package.
+
+This patch introduces two separate presentation layers:
+- styles/desktop-luxury.css
+- styles/mobile-luxury.css
+
+They are intentionally device-scoped so desktop and mobile have independent
+visual identities without changing shared records or business logic.
