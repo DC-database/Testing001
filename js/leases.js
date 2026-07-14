@@ -17,15 +17,16 @@
     const requested = params.status || "active";
 
     view.innerHTML = `
-      <section class="page-heading">
-        <div><div class="eyebrow">LEASE MANAGEMENT</div><h1>Leases</h1><p>Active, upcoming and historical contracts with direct access to the corresponding unit folder.</p></div>
-        <div class="page-actions"><button class="button button-secondary" data-print>Print contract register</button></div>
+      <section class="page-heading compact-heading">
+        <div><h1>Leases</h1></div>
+        <div class="page-actions"><button class="button button-secondary" data-document-action>${root.ui.documentActionText("Print contract register", "PDF contract register")}</button></div>
       </section>
       <div class="toolbar">
         <input id="contract-search" class="search-input" type="search" placeholder="Search contract, tenant, property or unit">
         <div id="contract-filter" class="segmented">${["active","expiring","upcoming","completed","expired","all"].map((status) => `<button data-status="${status}" class="${requested === status ? "active" : ""}">${u.titleCase(status)}</button>`).join("")}</div>
       </div>
-      <article class="panel"><div class="data-table-wrap"><table class="data-table"><thead><tr><th>Contract</th><th>Tenant</th><th>Property / Unit</th><th>Start</th><th>End</th><th>Monthly Rent</th><th>Status</th><th></th></tr></thead><tbody id="contract-table-body"></tbody></table></div></article>`;
+      <article class="panel desktop-record-table lease-desktop-table"><div class="data-table-wrap"><table class="data-table"><thead><tr><th>Contract</th><th>Tenant</th><th>Property / Unit</th><th>Start</th><th>End</th><th>Monthly Rent</th><th>Status</th><th></th></tr></thead><tbody id="contract-table-body"></tbody></table></div></article>
+      <section id="contract-mobile-list" class="mobile-record-list lease-mobile-list" aria-label="Lease records"></section>`;
 
     const resolvedStatus = (contract) => {
       if (contract.status === "active") {
@@ -48,6 +49,7 @@
         const matchesText = [contract.contractNumber, tenant?.name, property?.name, unit?.unitNumber, status].some((value) => u.normalize(value).includes(term));
         return matchesStatus && matchesText;
       }).sort((a,b) => new Date(a.endDate) - new Date(b.endDate));
+
       view.querySelector("#contract-table-body").innerHTML = filtered.map((contract) => {
         const unit = unitMap.get(contract.unitId);
         const property = propertyMap.get(contract.propertyId);
@@ -55,6 +57,27 @@
         const status = resolvedStatus(contract);
         return `<tr class="clickable" data-unit-id="${contract.unitId}"><td><div class="table-title">${u.escapeHTML(contract.contractNumber)}</div></td><td>${u.escapeHTML(tenant?.name || "Tenant")}</td><td>${u.escapeHTML(property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</td><td>${u.date(contract.startDate)}</td><td>${u.date(contract.endDate)}</td><td>${u.money(contract.monthlyRent)}</td><td><span class="status-chip ${status}">${u.titleCase(status)}</span></td><td>Open →</td></tr>`;
       }).join("") || `<tr><td colspan="8">${root.ui.emptyState("No contracts found", "Change the search or status filter.")}</td></tr>`;
+
+      view.querySelector("#contract-mobile-list").innerHTML = filtered.map((contract) => {
+        const unit = unitMap.get(contract.unitId);
+        const property = propertyMap.get(contract.propertyId);
+        const tenant = tenantMap.get(contract.tenantId);
+        const status = resolvedStatus(contract);
+        const days = u.daysBetween(new Date(), contract.endDate);
+        const timing = status === "upcoming"
+          ? `Starts ${u.date(contract.startDate)}`
+          : days < 0
+            ? `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} past due`
+            : `${days} day${days === 1 ? "" : "s"} remaining`;
+        return `<button type="button" class="mobile-record-card lease-record-card" data-unit-id="${contract.unitId}">
+          <span class="mobile-record-top"><b>${u.escapeHTML(property?.code || property?.name || "Property")} · ${u.escapeHTML(unit?.unitNumber || "Unit")}</b><span class="status-chip ${status}">${u.titleCase(status)}</span></span>
+          <strong>${u.escapeHTML(tenant?.name || "Tenant")}</strong>
+          <span class="mobile-record-meta"><span>End</span><b>${u.date(contract.endDate)}</b></span>
+          <span class="mobile-record-meta"><span>Timing</span><b>${u.escapeHTML(timing)}</b></span>
+          <span class="mobile-record-bottom"><b>${u.money(contract.monthlyRent)} / month</b><i>View lease →</i></span>
+        </button>`;
+      }).join("") || root.ui.emptyState("No contracts found", "Change the search or status filter.");
+
       view.querySelectorAll("[data-unit-id]").forEach((row) => row.addEventListener("click", () => root.modules.unitDetail.open(row.dataset.unitId, "contract")));
     };
 
@@ -65,7 +88,7 @@
       button.classList.add("active");
       draw();
     }));
-    view.querySelector("[data-print]").addEventListener("click", () => {
+    view.querySelector("[data-document-action]").addEventListener("click", () => {
       const rows = contracts.map((contract) => {
         const unit = unitMap.get(contract.unitId);
         const property = propertyMap.get(contract.propertyId);

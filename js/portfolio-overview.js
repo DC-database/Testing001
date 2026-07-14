@@ -37,6 +37,33 @@
     </tr>`;
   }
 
+
+  function maintenanceTrendSvg(rows, maxValue) {
+    const width = 640;
+    const height = 170;
+    const padX = 18;
+    const padTop = 16;
+    const padBottom = 32;
+    const chartHeight = height - padTop - padBottom;
+    const usableWidth = width - padX * 2;
+    const points = rows.map((row, index) => {
+      const x = padX + (rows.length <= 1 ? usableWidth / 2 : index * usableWidth / (rows.length - 1));
+      const y = padTop + chartHeight - (Number(row.cost || 0) / Math.max(maxValue, 1)) * chartHeight;
+      return { ...row, x, y };
+    });
+    const line = points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+    const area = points.length ? `${padX},${padTop + chartHeight} ${line} ${padX + usableWidth},${padTop + chartHeight}` : "";
+    return `<div class="mobile-maintenance-trend" aria-label="Monthly maintenance cost trend">
+      <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Maintenance cost for the last 12 months">
+        <defs><linearGradient id="maintenance-area-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".32"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+        <line x1="${padX}" y1="${padTop + chartHeight}" x2="${padX + usableWidth}" y2="${padTop + chartHeight}" class="mobile-trend-axis"/>
+        ${area ? `<polygon points="${area}" fill="url(#maintenance-area-gradient)"/>` : ""}
+        <polyline points="${line}" class="mobile-trend-line"/>
+        ${points.map((point, index) => `<g class="mobile-trend-point"><circle cx="${point.x}" cy="${point.y}" r="4"><title>${u.escapeHTML(point.fullLabel)} · ${u.money(point.cost)}</title></circle>${index % 2 === 0 || index === points.length - 1 ? `<text x="${point.x}" y="${height - 8}" text-anchor="middle">${u.escapeHTML(point.label)}</text>` : ""}</g>`).join("")}
+      </svg>
+    </div>`;
+  }
+
   async function render(view) {
     const snapshot = await root.data.getDashboardSnapshot();
     const propertiesByRevenue = [...snapshot.properties].sort((a, b) => b.monthlyRevenue - a.monthlyRevenue);
@@ -113,9 +140,10 @@
 
           <article class="premium-panel maintenance-cost-trend-chart">
             <header class="premium-panel-header"><div><span>MONTHLY MAINTENANCE COST TREND</span><h3>Last 12 months</h3></div><strong>${u.money(snapshot.maintenanceSummary.costThisMonth)}</strong></header>
-            <div class="premium-panel-body maintenance-trend-bars">
+            <div class="premium-panel-body maintenance-trend-bars desktop-maintenance-trend">
               ${snapshot.maintenanceSummary.costsByMonth.map((row) => `<div title="${u.escapeHTML(row.fullLabel)} · ${u.money(row.cost)} · ${row.count} job(s)"><span><i style="height:${Math.max(row.cost ? 8 : 2, row.cost / maxMaintenanceMonthlyCost * 100)}%"></i></span><b>${u.escapeHTML(row.label)}</b><small>${row.cost ? u.compact(row.cost) : "—"}</small></div>`).join("")}
             </div>
+            ${maintenanceTrendSvg(snapshot.maintenanceSummary.costsByMonth, maxMaintenanceMonthlyCost)}
           </article>
 
           <article class="premium-panel dashboard-maintenance-urgent">
@@ -179,7 +207,7 @@
 
       <section class="dashboard-section">
         <header class="dashboard-section-header"><div><h2>Lease Expiry Calendar</h2><p>Next 12 months of revenue risk.</p></div><button class="text-button" data-open-report="lease-expiry">Detailed lease report →</button></header>
-        <article class="premium-panel lease-panel">
+        <article class="premium-panel lease-panel desktop-lease-expiry">
           <div class="lease-risk-table-wrap"><table class="lease-risk-table"><thead><tr><th>Month</th><th>Expiring leases</th><th>Risk</th><th>Revenue at risk</th></tr></thead><tbody>
             ${snapshot.leaseBuckets.map((bucket) => { const risk = riskLevel(bucket.count); return `<tr><td>${u.escapeHTML(bucket.fullLabel)}</td><td><b>${bucket.count}</b></td><td><span class="risk-chip ${risk.className}">${risk.label}</span></td><td>${u.money(bucket.revenueAtRisk)}</td></tr>`; }).join("")}
           </tbody></table></div>
@@ -187,6 +215,12 @@
             <div class="expiry-axis"><span>${maxExpiry}</span><span>${Math.round(maxExpiry / 2)}</span><span>0</span></div>
             <div class="expiry-bars">${snapshot.leaseBuckets.map((bucket) => `<button title="${u.escapeHTML(bucket.fullLabel)} · ${bucket.count} leases · ${u.money(bucket.revenueAtRisk)} at risk"><span><i style="height:${Math.max(3, bucket.count / maxExpiry * 100)}%"></i></span><b>${bucket.count}</b><small>${u.escapeHTML(bucket.label)}</small></button>`).join("")}</div>
           </div>
+        </article>
+        <article class="premium-panel mobile-lease-expiry">
+          <div class="mobile-lease-months">
+            ${snapshot.leaseBuckets.slice(0, 6).map((bucket) => { const risk = riskLevel(bucket.count); return `<button type="button" data-open-report="lease-expiry"><span><b>${u.escapeHTML(bucket.label)}</b><small>${u.money(bucket.revenueAtRisk)}</small></span><strong>${bucket.count}</strong><i class="risk-chip ${risk.className}">${risk.label}</i></button>`; }).join("")}
+          </div>
+          <button type="button" class="button button-secondary button-full" data-full-lease-timeline>View full 12-month timeline</button>
         </article>
       </section>
 
@@ -213,6 +247,17 @@
       if (el.dataset.propertyId) root.router.navigate("properties", { propertyId: el.dataset.propertyId });
     }));
     view.querySelectorAll("[data-unit-id]").forEach((el) => el.addEventListener("click", () => root.modules.unitDetail.open(el.dataset.unitId)));
+    view.querySelector("[data-full-lease-timeline]")?.addEventListener("click", () => {
+      const modal = root.ui.openModal({
+        title: "12-Month Lease Expiry",
+        eyebrow: "REVENUE RISK",
+        size: "medium",
+        content: `<div class="mobile-full-timeline">${snapshot.leaseBuckets.map((bucket) => { const risk = riskLevel(bucket.count); return `<div><span><strong>${u.escapeHTML(bucket.fullLabel)}</strong><small>${u.money(bucket.revenueAtRisk)} at risk</small></span><b>${bucket.count} lease${bucket.count === 1 ? "" : "s"}</b><i class="risk-chip ${risk.className}">${risk.label}</i></div>`; }).join("")}</div>`,
+        footer: `<button class="button button-secondary" data-close>Close</button><button class="button button-primary" data-report>PDF report</button>`
+      });
+      modal.modal.querySelector("[data-close]").addEventListener("click", modal.close);
+      modal.modal.querySelector("[data-report]").addEventListener("click", () => root.modules.reports.openReport("lease-expiry"));
+    });
     view.querySelectorAll("[data-open-report]").forEach((el) => el.addEventListener("click", () => root.modules.reports.openReport(el.dataset.openReport)));
     view.querySelectorAll("[data-kpi]").forEach((el) => el.addEventListener("click", () => {
       const key = el.dataset.kpi;

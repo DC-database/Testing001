@@ -125,12 +125,13 @@
 
       <article class="panel unit-directory-panel" id="unit-directory-panel">
         <header class="panel-header unit-directory-header">
-          <div><div class="eyebrow">UNIT DIRECTORY</div><h3 id="unit-directory-title">All units</h3><p id="unit-directory-subtitle">Every current unit in the portfolio.</p></div>
+          <div><h3 id="unit-directory-title">All Units</h3><p id="unit-directory-subtitle">Every current unit in the portfolio.</p></div>
         </header>
         <div class="panel-body unit-directory-help">
           <div class="status-explanation" id="status-explanation"></div>
         </div>
-        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Property</th><th>Unit</th><th>Type / Specifics</th><th>Current Tenant</th><th>Status</th><th>Rent Value</th><th>Contract End</th><th></th></tr></thead><tbody id="portfolio-unit-table-body"></tbody></table></div>
+        <div class="data-table-wrap desktop-record-table portfolio-unit-desktop-table"><table class="data-table"><thead><tr><th>Property</th><th>Unit</th><th>Type / Specifics</th><th>Current Tenant</th><th>Status</th><th>Rent Value</th><th>Contract End</th><th></th></tr></thead><tbody id="portfolio-unit-table-body"></tbody></table></div>
+        <section id="portfolio-unit-mobile-list" class="mobile-record-list portfolio-unit-mobile-list" aria-label="Unit records"></section>
       </article>`;
 
     const statusMessages = {
@@ -210,8 +211,22 @@
         </tr>`;
       }).join("") || `<tr><td colspan="8">${root.ui.emptyState(`No ${filterName.toLowerCase()} found`, "Change the status tab or search text.")}</td></tr>`;
 
+      view.querySelector("#portfolio-unit-mobile-list").innerHTML = matchingUnits.map((unit) => {
+        const property = propertyMap.get(unit.propertyId);
+        const tenant = tenantMap.get(unit.currentTenantId);
+        const contract = contractMap.get(unit.currentContractId);
+        const secondary = tenant?.name || unit.aptType || unit.specifics || "No tenant assigned";
+        return `<button type="button" class="mobile-record-card unit-record-card" data-unit-id="${unit.id}">
+          <span class="mobile-record-top"><b>${u.escapeHTML(property?.code || property?.name || "Property")} · ${u.escapeHTML(unit.unitNumber)}</b><span class="status-chip ${unit.status}">${statusLabel(unit.status)}</span></span>
+          <strong>${u.escapeHTML(secondary)}</strong>
+          <span class="mobile-record-meta"><span>Property</span><b>${u.escapeHTML(property?.name || "Unknown property")}</b></span>
+          <span class="mobile-record-meta"><span>${tenant ? "Lease end" : "Unit type"}</span><b>${tenant && contract?.endDate ? u.date(contract.endDate) : u.escapeHTML(unit.aptType || "—")}</b></span>
+          <span class="mobile-record-bottom"><b>${u.money(unit.rentValue)} / month</b><i>View unit →</i></span>
+        </button>`;
+      }).join("") || root.ui.emptyState(`No ${filterName.toLowerCase()} found`, "Change the status tab or search text.");
+
       view.querySelectorAll("[data-property-id]").forEach((card) => card.addEventListener("click", () => root.router.navigate("properties", { propertyId: card.dataset.propertyId, status })));
-      view.querySelectorAll("#portfolio-unit-table-body [data-unit-id]").forEach((row) => row.addEventListener("click", () => root.modules.unitDetail.open(row.dataset.unitId)));
+      view.querySelectorAll("#portfolio-unit-table-body [data-unit-id], #portfolio-unit-mobile-list [data-unit-id]").forEach((row) => row.addEventListener("click", () => root.modules.unitDetail.open(row.dataset.unitId)));
     };
 
     drawPortfolio();
@@ -308,7 +323,8 @@
           </div>
           <div class="status-explanation" id="property-status-explanation"></div>
         </div>
-        <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Unit</th><th>Type</th><th>Specifics</th><th>Status</th><th>Rent Value</th><th>Kahramaa</th><th></th></tr></thead><tbody id="unit-table-body"></tbody></table></div>
+        <div class="data-table-wrap desktop-record-table property-unit-desktop-table"><table class="data-table"><thead><tr><th>Unit</th><th>Type</th><th>Specifics</th><th>Status</th><th>Rent Value</th><th>Kahramaa</th><th></th></tr></thead><tbody id="unit-table-body"></tbody></table></div>
+        <section id="property-unit-mobile-list" class="mobile-record-list property-unit-mobile-list" aria-label="Property unit records"></section>
       </article>`;
 
     const statusMessages = {
@@ -330,6 +346,13 @@
       });
       view.querySelector("#property-status-explanation").textContent = `${statusMessages[status] || statusMessages.all} ${filtered.length} record${filtered.length === 1 ? "" : "s"} shown.`;
       view.querySelector("#unit-table-body").innerHTML = filtered.map((unit) => `<tr class="clickable" data-unit-id="${unit.id}"><td><div class="table-title">${u.escapeHTML(unit.unitNumber)}</div><div class="table-subtitle">${u.escapeHTML(property.code)}</div></td><td>${u.escapeHTML(unit.aptType || "—")}</td><td>${u.escapeHTML(unit.specifics || "—")}</td><td><span class="status-chip ${unit.status}">${statusLabel(unit.status)}</span></td><td>${u.money(unit.rentValue)}</td><td>${u.escapeHTML(unit.kahramaa?.accountNumber || "—")}</td><td>Open →</td></tr>`).join("") || `<tr><td colspan="7">${root.ui.emptyState("No units found", "Change the search or status filter.")}</td></tr>`;
+      view.querySelector("#property-unit-mobile-list").innerHTML = filtered.map((unit) => `<button type="button" class="mobile-record-card unit-record-card" data-unit-id="${unit.id}">
+        <span class="mobile-record-top"><b>${u.escapeHTML(property.code)} · ${u.escapeHTML(unit.unitNumber)}</b><span class="status-chip ${unit.status}">${statusLabel(unit.status)}</span></span>
+        <strong>${u.escapeHTML(unit.aptType || "Unit")}</strong>
+        <span class="mobile-record-meta"><span>Specifics</span><b>${u.escapeHTML(unit.specifics || "—")}</b></span>
+        <span class="mobile-record-meta"><span>Kahramaa</span><b>${u.escapeHTML(unit.kahramaa?.accountNumber || "—")}</b></span>
+        <span class="mobile-record-bottom"><b>${u.money(unit.rentValue)} / month</b><i>View unit →</i></span>
+      </button>`).join("") || root.ui.emptyState("No units found", "Change the search or status filter.");
       view.querySelectorAll("[data-unit-id]").forEach((row) => row.addEventListener("click", () => root.modules.unitDetail.open(row.dataset.unitId)));
     };
 

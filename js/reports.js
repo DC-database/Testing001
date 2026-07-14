@@ -18,8 +18,8 @@
 
   async function render(view) {
     view.innerHTML = `
-      <section class="page-heading"><div><div class="eyebrow">PRINT & PDF READY</div><h1>Reports</h1><p>Reports are generated from the current portfolio records and remain ready for Firebase data later.</p></div></section>
-      <section class="report-grid">${REPORTS.map((report) => `<article class="report-card"><div class="report-icon">${report.icon}</div><h3>${u.escapeHTML(report.title)}</h3><p>${u.escapeHTML(report.description)}</p><button class="button button-secondary" data-report="${report.id}">Preview & print</button></article>`).join("")}</section>`;
+      <section class="page-heading compact-heading"><div><h1>Reports</h1></div></section>
+      <section class="report-grid">${REPORTS.map((report) => `<article class="report-card"><div class="report-icon">${report.icon}</div><h3>${u.escapeHTML(report.title)}</h3><p>${u.escapeHTML(report.description)}</p><button class="button button-secondary" data-report="${report.id}">${root.ui.documentActionText("Preview & print", "Generate PDF")}</button></article>`).join("")}</section>`;
     view.querySelectorAll("[data-report]").forEach((button) => button.addEventListener("click", () => openReport(button.dataset.report)));
   }
 

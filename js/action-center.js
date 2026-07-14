@@ -12,7 +12,7 @@
     view.innerHTML = `
       <section class="page-heading">
         <div><div class="eyebrow">DAILY PRIORITIES</div><h1>Action Center</h1><p>One operational queue for contract risk, vacancies, maintenance and data-quality issues.</p></div>
-        <div class="page-actions"><button class="button button-secondary" data-print>Print action list</button></div>
+        <div class="page-actions"><button class="button button-secondary" data-print>${root.ui.documentActionText("Print action list", "PDF action list")}</button></div>
       </section>
       <article class="panel">
         <header class="panel-header"><div><h3>${u.number(snapshot.actions.length)} active actions</h3><p>Sorted by urgency and days remaining.</p></div></header>
