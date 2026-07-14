@@ -1201,3 +1201,18 @@ html[data-theme="day"] .account-menu,html[data-theme="day"] .notification-panel{
 .account-state{display:inline-flex;align-items:center;justify-content:center;min-height:27px;padding:0 9px;border-radius:999px;font-size:.53rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .account-state.active{color:#bfe2ce;background:rgba(72,156,108,.13);border:1px solid rgba(72,156,108,.28)}
 .account-state.disabled{color:#e2b9b9;background:rgba(173,74,74,.13);border:1px solid rgba(173,74,74,.28)}
+
+/* v0.8.0 shared record-count badge */
+.unit-directory-count {
+  display:inline-grid;
+  place-items:center;
+  min-width:42px;
+  height:32px;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--gold-soft);
+  background:rgba(209,173,88,.06);
+  font-size:.68rem;
+  font-weight:800;
+}

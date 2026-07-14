@@ -644,3 +644,42 @@ html[data-theme="day"] .topbar-icon-button { background:#fff; }
 html[data-theme="day"] .mobile-brand .brand-word-img { filter:brightness(0); }
 html[data-theme="day"] .sidebar .brand-word-img,
 html[data-theme="day"] .login-screen .brand-word-img { filter:none; }
+
+/* =========================================================
+   v0.8.0 BRAND LOCKUP REFINEMENT
+   Actual SVG assets stay on one coordinated horizontal line.
+   ========================================================= */
+.brand-lockup,
+.brand-lockup-login,
+.brand-lockup-sidebar,
+.mobile-brand {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+.brand-lockup-sidebar {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+}
+.brand-lockup-sidebar .brand-mark-img {
+  width:42px;
+  height:49px;
+}
+.brand-lockup-sidebar .brand-word-img {
+  width:111px;
+  height:18px;
+}
+.brand-lockup-login {
+  display:flex;
+  align-items:center;
+  gap:23px;
+}
+.brand-lockup-login .brand-mark-img {
+  width:98px;
+  height:114px;
+}
+.brand-lockup-login .brand-word-img {
+  width:238px;
+  height:38px;
+}
