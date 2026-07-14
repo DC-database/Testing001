@@ -665,3 +665,55 @@ html[data-ui="mobile"][data-theme="day"] .mobile-payment-meta b { color:#303035;
   html[data-ui="mobile"] .data-table th,
   html[data-ui="mobile"] .data-table td { padding:9px 10px; }
 }
+
+
+/* =========================================================
+   v0.8.1 MOBILE HORIZONTAL LOGO LOCKUP
+   Mobile uses the same official one-line composition at a
+   phone-appropriate scale; it never restacks the two parts.
+   ========================================================= */
+html[data-ui="mobile"] .login-brand-mobile .brand-lockup {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-flow:row nowrap !important;
+  width:100%;
+}
+html[data-ui="mobile"] .login-brand-mobile .brand-logo-img {
+  width:min(230px, 76vw);
+  max-height:56px;
+}
+html[data-ui="mobile"] .mobile-brand {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+}
+html[data-ui="mobile"] .brand-lockup-mobile {
+  display:flex !important;
+  width:105px;
+  min-width:105px;
+  overflow:hidden;
+}
+html[data-ui="mobile"] .brand-lockup-mobile .brand-logo-img {
+  width:105px;
+  max-height:26px;
+}
+html[data-ui="mobile"] .mobile-brand > b {
+  margin-left:0;
+  padding-left:10px;
+}
+@media (max-width: 360px) {
+  html[data-ui="mobile"] .brand-lockup-mobile {
+    width:92px;
+    min-width:92px;
+  }
+  html[data-ui="mobile"] .brand-lockup-mobile .brand-logo-img { width:92px; }
+  html[data-ui="mobile"] .mobile-brand > b { font-size:.62rem; padding-left:8px; }
+}
+@media (max-height: 710px) {
+  html[data-ui="mobile"] .login-brand-mobile .brand-logo-img {
+    width:min(200px, 70vw);
+    max-height:49px;
+  }
+}
