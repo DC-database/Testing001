@@ -1,0 +1,5 @@
+@media print {
+  .sidebar,.topbar,.mobile-bottom-nav,.mobile-fab,.notification-panel,.account-menu { display:none !important; }
+  .app-shell,.workspace { display:block !important; }
+  .app-view { padding:0 !important; max-width:none !important; }
+}
