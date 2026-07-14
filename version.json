@@ -1,6 +1,6 @@
 {
+  "version": "0.8.0",
   "name": "59 Real Estate",
-  "version": "0.7.2",
-  "dataProvider": "indexeddb",
-  "buildType": "patch"
+  "channel": "mobile-app-rebuild",
+  "updated": "2026-07-14"
 }

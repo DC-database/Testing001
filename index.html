@@ -4,12 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080808">
+  <script>
+    (() => {
+      const narrow = window.innerWidth <= 760;
+      const coarse = matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+      const noHover = matchMedia("(hover: none)").matches;
+      const shortSide = Math.min(screen.width || innerWidth, screen.height || innerHeight);
+      document.documentElement.dataset.ui = narrow || ((coarse || noHover) && shortSide <= 920) ? "mobile" : "desktop";
+    })();
+  </script>
   <title>59 Real Estate · Portfolio Management</title>
   <link rel="icon" href="assets/59.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles/main.css?v=0.7.1">
-  <link rel="stylesheet" href="styles/components.css?v=0.7.2">
-  <link rel="stylesheet" href="styles/mobile.css?v=0.7.2">
-  <link rel="stylesheet" href="styles/print.css?v=0.7.0">
+  <link rel="stylesheet" href="styles/main.css?v=0.8.0">
+  <link rel="stylesheet" href="styles/components.css?v=0.8.0">
+  <link rel="stylesheet" href="styles/mobile-app.css?v=0.8.0">
+  <link rel="stylesheet" href="styles/print.css?v=0.8.0">
 </head>
 <body>
   <noscript>This system requires JavaScript.</noscript>
@@ -166,30 +175,30 @@
   <div id="toast-root" class="toast-root" aria-live="polite"></div>
   <div id="loading-overlay" class="loading-overlay is-hidden"><div class="loader-mark"><img class="brand-mark-img" src="assets/59.svg" alt=""></div><span>Preparing portfolio…</span></div>
 
-  <script src="js/app-state.js?v=0.7.2"></script>
+  <script src="js/app-state.js?v=0.8.0"></script>
   <script src="js/formatters.js?v=0.7.0"></script>
   <script src="js/seed-data.js?v=0.7.0"></script>
   <script src="js/indexeddb-provider.js?v=0.7.0"></script>
   <script src="js/firebase-provider.js?v=0.7.0"></script>
-  <script src="js/data-service.js?v=0.7.0"></script>
+  <script src="js/data-service.js?v=0.8.0"></script>
   <script src="js/auth-service.js?v=0.7.0"></script>
   <script src="js/import-service.js?v=0.7.0"></script>
-  <script src="js/ui.js?v=0.7.2"></script>
-  <script src="js/router.js?v=0.7.0"></script>
-  <script src="js/portfolio-overview.js?v=0.7.2"></script>
-  <script src="js/action-center.js?v=0.7.2"></script>
-  <script src="js/properties-units.js?v=0.7.2"></script>
-  <script src="js/unit-detail.js?v=0.7.2"></script>
-  <script src="js/tenants.js?v=0.7.2"></script>
-  <script src="js/leases.js?v=0.7.2"></script>
-  <script src="js/financials.js?v=0.7.2"></script>
-  <script src="js/maintenance.js?v=0.7.0"></script>
-  <script src="js/reports.js?v=0.7.2"></script>
+  <script src="js/ui.js?v=0.8.0"></script>
+  <script src="js/router.js?v=0.8.0"></script>
+  <script src="js/portfolio-overview.js?v=0.8.0"></script>
+  <script src="js/action-center.js?v=0.8.0"></script>
+  <script src="js/properties-units.js?v=0.8.0"></script>
+  <script src="js/unit-detail.js?v=0.8.0"></script>
+  <script src="js/tenants.js?v=0.8.0"></script>
+  <script src="js/leases.js?v=0.8.0"></script>
+  <script src="js/financials.js?v=0.8.0"></script>
+  <script src="js/maintenance.js?v=0.8.0"></script>
+  <script src="js/reports.js?v=0.8.0"></script>
   <script src="js/portfolio-import.js?v=0.7.0"></script>
-  <script src="js/users-access.js?v=0.7.2"></script>
-  <script src="js/settings.js?v=0.7.0"></script>
-  <script src="js/notifications.js?v=0.7.0"></script>
-  <script src="js/mobile-ui.js?v=0.7.0"></script>
-  <script src="js/main.js?v=0.7.0"></script>
+  <script src="js/users-access.js?v=0.8.0"></script>
+  <script src="js/settings.js?v=0.8.0"></script>
+  <script src="js/notifications.js?v=0.8.0"></script>
+  <script src="js/mobile-ui.js?v=0.8.0"></script>
+  <script src="js/main.js?v=0.8.0"></script>
 </body>
 </html>

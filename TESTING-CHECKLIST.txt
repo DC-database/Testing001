@@ -1,61 +1,72 @@
-59 REAL ESTATE v0.7.2 — TESTING CHECKLIST
+59 REAL ESTATE v0.8.0 — TESTING CHECKLIST
 
-BASE
-[ ] v0.7.1 was working before applying this patch.
-[ ] All patch files were uploaded to the correct paths.
-[ ] Browser cache was refreshed.
+BEFORE UPLOAD
+[ ] Confirm the current live system is v0.7.2.
+[ ] Download a backup from Settings if important local test records exist.
+[ ] Keep a copy of the current repository.
 
-MOBILE PORTRAIT — PORTFOLIO OVERVIEW
-[ ] Monthly Maintenance Cost Trend fits completely inside the screen.
-[ ] All 12 months are represented in the trend.
-[ ] No right-side month is cut off.
-[ ] Lease Expiry Calendar shows 6 months initially.
-[ ] View full 12-month timeline opens all months.
-[ ] Page content does not sit behind the bottom navigation.
+UPLOAD
+[ ] Replace index.html and version.json.
+[ ] Replace the included js files inside js/.
+[ ] Replace the included CSS files inside styles/.
+[ ] Add styles/mobile-app.css.
+[ ] Add all 11 compatibility JPG files directly inside assets/.
+[ ] Do not create nested folders.
+[ ] Wait for GitHub Pages deployment to finish.
+[ ] Refresh with Ctrl+F5 on desktop and fully close/reopen the site on mobile.
 
-MOBILE PORTRAIT — PROPERTIES & UNITS
-[ ] Unit Directory displays cards, not a cut desktop table.
-[ ] No horizontal scrolling is required.
-[ ] Cards show Property/Unit, status, rent and relevant tenant/unit information.
-[ ] Tapping a card opens the unit folder.
-[ ] Occupied, Booked, Ready, Inspection and Maintenance filters still work.
+CHROME IMAGE COMPATIBILITY
+[ ] Open the upgraded live site in the same Chrome profile that previously showed 404 images.
+[ ] Confirm all property cards now show images without clearing IndexedDB.
+[ ] Confirm the console no longer reports old property-image 404 errors.
+[ ] Confirm Edge and another browser still show the same images.
 
-MOBILE PORTRAIT — LEASES
-[ ] Lease records display as cards.
-[ ] No horizontal scrolling is required.
-[ ] Property/Unit, tenant, status, end/timing and QAR rent are visible.
-[ ] Tapping a card opens the lease/unit record.
+MOBILE LOGIN
+[ ] Test on a narrow Android or iPhone portrait screen.
+[ ] Confirm the login screen does not extend horizontally.
+[ ] Confirm 59 and REAL ESTATE are on one proportional horizontal line.
+[ ] Open the keyboard and confirm fields/button remain reachable.
+[ ] Confirm login remains Night theme.
 
-MOBILE PORTRAIT — TENANTS
-[ ] Tenant records display as cards.
-[ ] No horizontal scrolling is required.
-[ ] Tenant, Property/Unit, status, lease timing and contact are visible.
-[ ] Tapping a current tenant opens the unit record.
+MOBILE APPLICATION
+[ ] Confirm no page-level horizontal scrolling in portrait.
+[ ] Confirm bottom navigation and floating action button do not cover content.
+[ ] Confirm the phone stays in the mobile app layout after rotating to landscape.
+[ ] Confirm desktop sidebar never appears on the phone.
 
-LANDSCAPE / DESKTOP
-[ ] Detailed tables return in landscape orientation.
-[ ] Desktop Properties, Leases and Tenants tables remain complete.
-[ ] Desktop official Print actions remain available.
+PROPERTIES & UNITS
+[ ] Confirm one property card per row in portrait.
+[ ] Confirm status chips scroll internally, not the whole page.
+[ ] Confirm Unit Directory shows mobile cards, not a clipped table.
+[ ] Confirm a unit card opens the complete unit folder.
 
-MOBILE DOCUMENTS
-[ ] Reports show Generate PDF, not Print.
-[ ] Contract register shows PDF wording.
-[ ] Payment schedule shows PDF wording.
-[ ] Receipt actions show PDF wording.
-[ ] Opening a mobile document shows PDF-ready preview and Save PDF.
-[ ] Desktop still opens the official print workflow.
+PORTFOLIO OVERVIEW
+[ ] Confirm KPI cards fit the screen.
+[ ] Confirm Monthly Maintenance Cost Trend fits fully inside its card.
+[ ] Confirm Lease Expiry mobile summary does not extend outside the screen.
+[ ] Confirm View Full Timeline opens the complete 12-month detail.
 
-USERS & ACCESS — DESKTOP
-[ ] Summary cards are clean and aligned.
-[ ] Users, Roles, Permissions, Sessions and Activity tabs work.
-[ ] View Access opens the selected user details.
-[ ] Role cards open the correct permission editor.
-[ ] Permission changes save correctly.
-[ ] Import remains fixed to Administrator only.
-[ ] Disable/enable account requires confirmation.
+LEASES AND TENANTS
+[ ] Confirm leases appear as portrait cards without sideways scrolling.
+[ ] Confirm tenants appear as portrait cards without sideways scrolling.
+[ ] Confirm opening a card shows the full record.
 
-USERS & ACCESS — MOBILE
-[ ] User cards fit without horizontal scrolling.
-[ ] Access tabs can be swiped horizontally.
-[ ] Permission groups open as accordions.
-[ ] Save Changes remains reachable above the bottom navigation.
+FINANCIALS
+[ ] Confirm payment schedules appear as mobile cards.
+[ ] Confirm due date, balance, status and payment actions are readable.
+[ ] Confirm mobile says Receipt PDF / Save or Share PDF, not official Print.
+
+MAINTENANCE
+[ ] Confirm jobs appear as mobile cards.
+[ ] Confirm schedule, assigned person, status and cost remain readable.
+[ ] Confirm field actions are touch friendly.
+
+USERS & ACCESS / SETTINGS
+[ ] Confirm Users & Access is clean and card based on mobile.
+[ ] Confirm permissions are grouped and do not require horizontal scrolling.
+[ ] Confirm Action Center and Audit Activity use mobile cards.
+
+DESKTOP REGRESSION
+[ ] Confirm desktop sidebar, header, tables and charts remain unchanged in layout.
+[ ] Confirm Properties, Overview, Leases, Tenants, Maintenance, Financials and Users & Access work.
+[ ] Confirm official desktop Print remains available and uses the approved print layout.

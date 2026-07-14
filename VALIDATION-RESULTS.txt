@@ -1,19 +1,12 @@
-59 REAL ESTATE v0.7.2 — VALIDATION RESULTS
+59 REAL ESTATE v0.8.0 — STATIC VALIDATION RESULTS
 
 PASSED
-- JavaScript syntax check passed for every file in js/.
-- version.json reports 0.7.2.
-- index.html cache versions were updated for every changed JavaScript and CSS file.
-- Mobile maintenance trend exists as a responsive SVG line/area chart.
-- Mobile lease expiry preview is limited to 6 months with a full 12-month action.
-- Properties & Units includes a dedicated portrait mobile record list.
-- Leases includes a dedicated portrait mobile card list.
-- Tenants includes a dedicated portrait mobile card list.
-- Users & Access includes Users, Roles, Permissions, Sessions and Activity tabs.
-- Mobile documents use PDF wording and open a PDF-ready preview rather than auto-printing.
-- Portrait mobile CSS blocks page-level horizontal overflow.
-- Landscape CSS restores detailed desktop tables.
-- Administrator-only import behavior remains unchanged.
+- JavaScript syntax check completed for every JS file in the cumulative build.
+- HTML parser check completed for index.html.
+- CSS parser check completed with zero parse errors for main.css, components.css, mobile-app.css and print.css.
+- All local script, stylesheet and logo references in index.html resolve to existing files in the cumulative build.
+- All 11 legacy property-image aliases exist and contain image data.
+- Patch file layout uses only the existing flat js/, styles/ and assets/ folders.
 
-NOTE
-A final visual check should still be completed on the actual target phones because browser font rendering, safe-area insets and device aspect ratios can vary.
+IMPORTANT VISUAL VALIDATION NOTE
+The execution environment used to assemble this patch blocks local browser preview through its network policy. Therefore, final visual behavior was not claimed from an emulated browser screenshot. The supplied TESTING-CHECKLIST.txt must be completed on the real GitHub Pages site and on actual mobile devices before accepting the patch for production.
