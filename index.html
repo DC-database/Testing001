@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <title>59 Real Estate · Portfolio Management</title>
+  <link rel="icon" href="assets/59.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles/main.css?v=0.7.1">
+  <link rel="stylesheet" href="styles/components.css?v=0.7.0">
+  <link rel="stylesheet" href="styles/mobile.css?v=0.7.1">
+  <link rel="stylesheet" href="styles/print.css?v=0.7.0">
+</head>
+<body>
+  <noscript>This system requires JavaScript.</noscript>
+
+  <section id="login-screen" class="login-screen login-fixed-night" aria-label="Secure sign in">
+    <div class="login-visual" aria-hidden="true">
+      <div class="login-visual-inner">
+        <div class="brand-lockup brand-lockup-login" aria-label="59 Real Estate"><img class="brand-mark-img" src="assets/59.svg" alt=""><img class="brand-word-img" src="assets/RE.svg" alt=""></div>
+        <p>Private property portfolio management, designed for clear decisions and complete operational control.</p>
+        <div class="login-stat-grid">
+          <div><strong>11</strong><span>Properties</span></div>
+          <div><strong>395</strong><span>Units</span></div>
+          <div><strong>Live</strong><span>Portfolio intelligence</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-card">
+        <div class="login-brand-mobile">
+          <div class="brand-lockup" aria-label="59 Real Estate"><img class="brand-mark-img" src="assets/59.svg" alt=""><img class="brand-word-img" src="assets/RE.svg" alt=""></div>
+        </div>
+        <div class="eyebrow">PRIVATE &amp; CONFIDENTIAL</div>
+        <h1>Secure access</h1>
+        <p class="muted">Sign in to the 59 Real Estate portfolio workspace.</p>
+
+        <form id="login-form" class="form-stack" autocomplete="off">
+          <label>
+            <span>Email</span>
+            <input id="login-email" type="email" required placeholder="name@59re.local" autocomplete="username">
+          </label>
+          <label>
+            <span>Password</span>
+            <div class="password-field">
+              <input id="login-password" type="password" required placeholder="Enter password" autocomplete="current-password">
+              <button type="button" id="toggle-password" class="icon-button compact" aria-label="Show password">Show</button>
+            </div>
+          </label>
+          <div id="login-error" class="form-error" role="alert"></div>
+          <button type="submit" class="button button-primary button-large">Secure sign in</button>
+        </form>
+
+        <div class="demo-divider"><span>Role access</span></div>
+        <div class="demo-accounts">
+          <button type="button" data-demo-role="ceo" class="demo-account">
+            <span class="demo-role-mark">C</span>
+            <span><strong>CEO view</strong><small>Executive, read only</small></span>
+          </button>
+          <button type="button" data-demo-role="manager" class="demo-account">
+            <span class="demo-role-mark">P</span>
+            <span><strong>Property Manager</strong><small>Daily portfolio operations</small></span>
+          </button>
+          <button type="button" data-demo-role="admin" class="demo-account">
+            <span class="demo-role-mark">A</span>
+            <span><strong>Administrator</strong><small>Users, access and controls</small></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="app-shell" class="app-shell is-hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-lockup brand-lockup-sidebar" aria-label="59 Real Estate"><img class="brand-mark-img" src="assets/59.svg" alt=""><img class="brand-word-img" src="assets/RE.svg" alt=""></div>
+      </div>
+
+      <nav id="primary-navigation" class="primary-navigation" aria-label="Main navigation">
+        <button data-route="properties" data-permission="view" class="nav-item active"><span class="nav-symbol">▥</span><span>Properties &amp; Units</span></button>
+        <button data-route="overview" data-permission="view" class="nav-item"><span class="nav-symbol">◔</span><span>Portfolio Overview</span></button>
+        <button data-route="leases" data-permission="view" class="nav-item"><span class="nav-symbol">▤</span><span>Leases</span></button>
+        <button data-route="tenants" data-permission="view" class="nav-item"><span class="nav-symbol">◎</span><span>Tenants</span></button>
+        <button data-route="maintenance" data-permission="view" class="nav-item"><span class="nav-symbol">⌁</span><span>Maintenance</span><b id="nav-maintenance-count" class="nav-count">0</b></button>
+        <button data-route="financials" data-permission="view" class="nav-item"><span class="nav-symbol">◫</span><span>Financials</span></button>
+        <button data-route="reports" data-permission="view" class="nav-item"><span class="nav-symbol">▥</span><span>Reports</span></button>
+
+        <div class="nav-divider"></div>
+        <button data-route="users" data-permission="admin" class="nav-item"><span class="nav-symbol">♙</span><span>Users &amp; Access</span></button>
+        <button data-route="settings" data-permission="view" class="nav-item"><span class="nav-symbol">⚙</span><span>Settings</span></button>
+      </nav>
+
+      <div id="sidebar-snapshot" class="sidebar-snapshot" aria-label="Portfolio snapshot">
+        <div class="sidebar-snapshot-title">PORTFOLIO SNAPSHOT</div>
+        <div class="sidebar-snapshot-grid">
+          <div><strong id="snapshot-properties">—</strong><span>Properties</span></div>
+          <div><strong id="snapshot-units">—</strong><span>Units</span></div>
+          <div><strong id="snapshot-occupancy">—</strong><span>Occupancy</span></div>
+        </div>
+        <div class="sidebar-snapshot-revenue"><strong id="snapshot-revenue">—</strong><span>Monthly Revenue</span></div>
+        <button type="button" class="sidebar-snapshot-link" data-route="overview">View full portfolio <span>→</span></button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="mobile-topbar-left">
+          <button id="mobile-menu-button" class="icon-button mobile-menu-button" aria-label="Open menu">☰</button>
+          <div class="mobile-brand"><img class="brand-mark-img" src="assets/59.svg" alt=""><img class="brand-word-img" src="assets/RE.svg" alt=""><b id="mobile-page-title">Portfolio</b></div>
+        </div>
+        <div class="topbar-spacer" aria-hidden="true"></div>
+        <div class="topbar-actions">
+          <div class="global-search-wrap">
+            <span>⌕</span>
+            <input id="global-search" type="search" placeholder="Search properties, tenants, leases..." autocomplete="off">
+            <div id="global-search-results" class="search-results is-hidden"></div>
+          </div>
+          <button id="quick-add-button" class="button button-accent quick-add-button" data-permission="create" type="button"><span>＋</span><span>New</span></button>
+          <div class="notification-wrap">
+            <button id="notification-button" class="topbar-icon-button" type="button" aria-label="Open notifications">♧<b id="notification-count" class="notification-count is-hidden">0</b></button>
+            <section id="notification-panel" class="notification-panel is-hidden" aria-label="Notifications"></section>
+          </div>
+          <div class="account-wrap">
+            <button id="topbar-user-button" class="topbar-user" type="button" aria-expanded="false">
+              <span id="topbar-user-initials" class="avatar avatar-small">--</span>
+              <span><strong id="topbar-user-name">User</strong><small id="topbar-user-role">Role</small></span>
+              <b class="account-chevron">⌄</b>
+            </button>
+            <section id="account-menu" class="account-menu is-hidden" aria-label="Account menu">
+              <div class="account-menu-profile"><span id="account-menu-initials" class="avatar">--</span><div><strong id="account-menu-name">User</strong><small id="account-menu-role">Role</small></div></div>
+              <button type="button" data-account-route="settings">My Profile &amp; Settings</button>
+              <button type="button" id="theme-toggle" class="theme-toggle"><span class="theme-icon">☾</span><span class="theme-label">Night</span></button>
+              <button type="button" data-account-route="users" data-permission="admin">Users &amp; Access</button>
+              <div class="account-menu-divider"></div>
+              <button type="button" id="logout-button">Sign out</button>
+            </section>
+          </div>
+          <button id="presentation-button" class="is-hidden" type="button">Presentation</button>
+        </div>
+      </header>
+
+      <main id="app-view" class="app-view" tabindex="-1"></main>
+    </div>
+
+    <nav id="mobile-bottom-navigation" class="mobile-bottom-nav" aria-label="Mobile navigation">
+      <button data-route="overview"><span>⌂</span><b>Home</b></button>
+      <button data-route="properties" class="active"><span>▥</span><b>Properties</b></button>
+      <button data-route="maintenance"><span>⌁</span><b>Maintenance</b></button>
+      <button data-route="financials"><span>◫</span><b>Financials</b></button>
+      <button id="mobile-more-button" type="button"><span>☷</span><b>More</b></button>
+    </nav>
+    <button id="mobile-fab" class="mobile-fab" type="button" data-permission="create" aria-label="Create new record">＋</button>
+    <section id="mobile-more-sheet" class="mobile-more-sheet is-hidden" aria-label="More navigation">
+      <header><strong>More</strong><button type="button" data-close-more>×</button></header>
+      <button data-route="leases"><span>▤</span>Leases</button>
+      <button data-route="tenants"><span>◎</span>Tenants</button>
+      <button data-route="reports"><span>▥</span>Reports</button>
+      <button data-route="users" data-permission="admin"><span>♙</span>Users &amp; Access</button>
+      <button data-route="settings"><span>⚙</span>Settings</button>
+      <button data-mobile-logout><span>↪</span>Sign out</button>
+    </section>
+  </div>
+
+  <div id="modal-root" class="modal-root" aria-live="polite"></div>
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div id="loading-overlay" class="loading-overlay is-hidden"><div class="loader-mark"><img class="brand-mark-img" src="assets/59.svg" alt=""></div><span>Preparing portfolio…</span></div>
+
+  <script src="js/app-state.js?v=0.7.0"></script>
+  <script src="js/formatters.js?v=0.7.0"></script>
+  <script src="js/seed-data.js?v=0.7.0"></script>
+  <script src="js/indexeddb-provider.js?v=0.7.0"></script>
+  <script src="js/firebase-provider.js?v=0.7.0"></script>
+  <script src="js/data-service.js?v=0.7.0"></script>
+  <script src="js/auth-service.js?v=0.7.0"></script>
+  <script src="js/import-service.js?v=0.7.0"></script>
+  <script src="js/ui.js?v=0.7.1"></script>
+  <script src="js/router.js?v=0.7.0"></script>
+  <script src="js/portfolio-overview.js?v=0.7.0"></script>
+  <script src="js/action-center.js?v=0.7.0"></script>
+  <script src="js/properties-units.js?v=0.7.0"></script>
+  <script src="js/unit-detail.js?v=0.7.0"></script>
+  <script src="js/tenants.js?v=0.7.0"></script>
+  <script src="js/leases.js?v=0.7.0"></script>
+  <script src="js/financials.js?v=0.7.0"></script>
+  <script src="js/maintenance.js?v=0.7.0"></script>
+  <script src="js/reports.js?v=0.7.0"></script>
+  <script src="js/portfolio-import.js?v=0.7.0"></script>
+  <script src="js/users-access.js?v=0.7.0"></script>
+  <script src="js/settings.js?v=0.7.0"></script>
+  <script src="js/notifications.js?v=0.7.0"></script>
+  <script src="js/mobile-ui.js?v=0.7.0"></script>
+  <script src="js/main.js?v=0.7.0"></script>
+</body>
+</html>

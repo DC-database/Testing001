@@ -1,0 +1,10 @@
+59 Real Estate v0.6.0
+FULL REPLACEMENT BUILD
+
+This is intentionally not a patch because the old project used nested JavaScript and stylesheet folders.
+
+Important:
+- Upload this whole package as a clean project.
+- Do not retain old js/core, js/modules, js/services, js/data or js/utilities folders.
+- All .js files now sit directly inside js/.
+- Future updates after this accepted base will return to patch-only delivery.

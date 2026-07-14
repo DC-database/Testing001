@@ -1,0 +1,18 @@
+59 REAL ESTATE · v0.7.0 AUTOMATED VALIDATION RESULTS
+
+PASSED
+- JavaScript syntax check: all js/*.js files.
+- CSS brace integrity: main.css, components.css, mobile.css and print.css.
+- Payment schedule generation: 12 monthly installments from 14 Jul 2026 to 14 Jun 2027.
+- Fixed-date rule: payment made 15 Aug 2026 did not move the next due date from 14 Sep 2026.
+- Post-dated cheque registration: not marked paid on receipt.
+- Cheque clearance: marked cleared and receipt generated.
+- Role access: CEO and Property Manager denied import; Administrator allowed import.
+- CSV template parse and validation.
+- Excel import template formula-error scan: no formula errors found.
+
+MANUAL BROWSER / USER ACCEPTANCE TESTING STILL REQUIRED
+- Visual rendering on the exact desktop and mobile devices used by 59 Real Estate.
+- Print/PDF output from the production browser and printer.
+- Real-data totals and migration verification.
+- Firebase security, authentication, Storage Rules and App Check.

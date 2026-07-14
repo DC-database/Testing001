@@ -1,0 +1,24 @@
+59 REAL ESTATE PATCH v0.7.1
+Applies to: v0.7.0
+
+FIXED
+- Official 59 and REAL ESTATE SVG logos now render as direct <img> elements.
+- Removed reliance on external SVG CSS masks, which can appear blank when the system is opened locally or when a browser blocks mask loading.
+- 59 logo uses the exact supplied SVG geometry with gold fill.
+- REAL ESTATE uses the exact supplied SVG wordmark.
+- Updated login, sidebar, mobile header, loading screen, favicon, and print branding.
+
+CHANGED FILES
+- index.html
+- version.json
+- styles/main.css
+- styles/mobile.css
+- js/ui.js
+- assets/59.svg
+- assets/RE.svg
+
+INSTALLATION
+1. Apply this only after v0.7.0.
+2. Replace the listed files in their matching locations.
+3. Keep the flat js/, styles/, and assets/ structure.
+4. Refresh with Ctrl+F5.
