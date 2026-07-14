@@ -1,0 +1,34 @@
+59 REAL ESTATE PORTFOLIO IMPORT
+
+ADMINISTRATOR ONLY
+Portfolio import, replace portfolio, backup restore and Firebase migration are restricted to the Administrator. Property Managers do not see or trigger these controls.
+
+Use one row per unit.
+
+Required columns:
+property_code, property_name, unit_number, unit_status, monthly_rent
+
+Allowed unit_status values:
+occupied, booked, vacant, inspection, maintenance, renovation, unavailable
+
+For occupied or booked units:
+tenant_name, contract_start and contract_end are required.
+Use YYYY-MM-DD for dates.
+
+Payment schedule fields:
+- first_due_date: normally the lease start date.
+- grace_period_days: optional number of days before an installment becomes overdue.
+- expected_payment_method: Post-Dated Cheque, Cash, Card, Bank Transfer, Auto-Debit, Replacement Cheque or Other.
+
+IMPORTANT PAYMENT RULE
+Contractual due dates are generated from the lease terms and remain fixed. The actual paid date only records whether an installment was early, on time or late; it never shifts the next due date.
+
+For vacant, inspection, maintenance, renovation or unavailable units:
+leave tenant and contract fields blank.
+
+Do not rename column headers.
+Property code + unit number must be unique.
+Enter amounts as numbers only, without QAR or commas.
+
+The importer separates each flat row into Property, Unit, Kahramaa, Tenant, Contract and Payment Schedule records.
+In production, the same validated importer will write through the Firebase provider.
