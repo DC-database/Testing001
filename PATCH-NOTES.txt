@@ -1,62 +1,37 @@
-59 REAL ESTATE — PATCH v0.8.6
-Base required: v0.8.5
-Patch type: Luxury Glass Shell / Separate Desktop & Mobile Identities
+59 REAL ESTATE — PATCH v0.8.7
+Base version: v0.8.6
+Patch type: Dashboard unit-status reconciliation
 
 PURPOSE
-This patch is the controlled premium visual refinement requested after v0.8.5.
-Desktop and mobile now have separate device-scoped presentation layers. They
-continue sharing the same data, authentication, permissions and business logic.
+The Portfolio Overview previously displayed Total Units, Occupied, Booked and Ready Units, but units under inspection, maintenance, renovation or unavailable status were not represented in the main KPI row. This made a correct total appear incomplete to an executive viewer.
 
-DESKTOP LUXURY IDENTITY
-- Floating smoked-glass navigation in Night mode.
-- True frosted-light navigation in Day mode; the sidebar no longer remains dark.
-- Added a smooth collapsible icon rail. The selected state is remembered locally.
-- The official horizontal 59 Real Estate SVG stays visible in both themes.
-- Collapsed mode uses the official 59.svg mark, not typed text.
-- Floating glass top bar with clearer separation from the workspace.
-- Refined gold active navigation treatment and readable inactive states.
-- Portfolio snapshot now belongs visually to the same glass shell.
-- Main panels use restrained glass depth while dense data remains readable.
+CHANGES
+1. Added a permanent “Unavailable / In Progress” KPI card.
+   - The card always remains visible, including when its value is 0.
+   - At zero it shows “No units currently blocked.”
+   - At a non-zero value it explains the included sub-statuses, such as Under Maintenance, Inspection, Renovation or Unavailable.
 
-MODALS / UNIT FOLDER
-- Unit Folder header, tabs, body and footer now form one continuous glass shell.
-- Removed the disconnected flat white/dark header slab.
-- Close button, dividers and internal surfaces use the same visual language.
-- Day mode uses frosted white glass and dark text.
-- Night mode uses smoked glass and light text.
-- Search, account and notification panels match the shell.
+2. Added a Unit Status Reconciliation strip directly below the KPI cards.
+   Example:
+   373 Occupied + 11 Booked + 10 Ready + 1 In Progress = 395 Total
 
-MOBILE LUXURY IDENTITY
-- Mobile remains a separate app presentation, not a reduced desktop page.
-- Floating mobile top bar and bottom navigation.
-- Day mode now uses genuinely light navigation surfaces.
-- Night mode uses smoked-glass navigation surfaces.
-- Touch cards, payment cards and panels use mobile-specific glass styling.
-- Full-screen mobile forms remain touch-first but now use a continuous glass shell.
-- Mobile metadata label/value spacing was improved.
-- Safe-area and portrait behavior remain intact.
+3. Added secure calculation fields to the dashboard snapshot:
+   - blocked
+   - underMaintenance
+   - inspection
+   - renovation
+   - unavailable
+   - otherBlocked
 
-TECHNICAL
-- New: styles/desktop-luxury.css
-- New: styles/mobile-luxury.css
-- Updated: index.html
-- Updated: js/main.js
-- Updated: js/app-state.js
-- Updated: version.json
-- No IndexedDB schema change.
-- No property, tenant, lease, payment or maintenance data migration.
-- No Firebase configuration change.
+4. Added dashboard drill-down.
+   - Clicking the new KPI or reconciliation item opens Properties & Units filtered to all blocked/in-progress units.
+   - The filter includes Inspection, Maintenance, Renovation and Unavailable statuses.
 
-INSTALLATION
-Upload every file in this patch over the matching path in the existing v0.8.5
-repository. Do not create an extra parent folder.
+5. Added responsive desktop and mobile presentation.
+   - Desktop displays six KPI cards and automatically changes to a three-column layout on narrower screens.
+   - Mobile gives the blocked KPI and reconciliation section a dedicated full-width layout.
 
-Correct examples:
-  index.html
-  version.json
-  js/main.js
-  js/app-state.js
-  styles/desktop-luxury.css
-  styles/mobile-luxury.css
-
-After deployment, use Ctrl + F5 in Chrome.
+DATA SAFETY
+- No IndexedDB records are modified.
+- No property, unit, tenant, contract, payment or maintenance data is deleted.
+- This patch changes only calculations, filtering and presentation.

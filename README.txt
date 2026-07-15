@@ -1,11 +1,5 @@
-59 Real Estate v0.8.6 Patch
+Apply this patch directly over 59 Real Estate v0.8.6.
 
-Apply only over v0.8.5.
-Upload the files using the exact folder structure shown in this package.
+Upload all included files with their existing folder structure, wait for deployment, then refresh with Ctrl + F5.
 
-This patch introduces two separate presentation layers:
-- styles/desktop-luxury.css
-- styles/mobile-luxury.css
-
-They are intentionally device-scoped so desktop and mobile have independent
-visual identities without changing shared records or business logic.
+This patch adds the permanent Unavailable / In Progress KPI and full unit-status reconciliation. It does not alter stored records.
