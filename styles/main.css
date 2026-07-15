@@ -387,18 +387,6 @@ html[data-theme="day"] .stat-card.dark .stat-label,
 html[data-theme="day"] .stat-card.dark small { color:#bcb9b3; }
 html[data-theme="day"] .segmented { background:#e9e5dc; }
 html[data-theme="day"] .segmented button.active { color:#111; background:#fff; box-shadow:0 2px 7px rgba(0,0,0,.08); }
-html[data-theme="day"] .status-chip.occupied,
-html[data-theme="day"] .status-chip.active,
-html[data-theme="day"] .status-chip.paid { color:#fff; background:#151517; border-color:#151517; }
-html[data-theme="day"] .status-chip.booked,
-html[data-theme="day"] .status-chip.upcoming { color:#111; background:var(--gold); border-color:var(--gold); }
-html[data-theme="day"] .status-chip.vacant,
-html[data-theme="day"] .status-chip.draft { color:#303030; background:#dedbd4; border-color:#c8c4bc; }
-html[data-theme="day"] .status-chip.maintenance,
-html[data-theme="day"] .status-chip.expiring { color:#fff; background:repeating-linear-gradient(135deg,#555 0,#555 5px,#777 5px,#777 10px); }
-html[data-theme="day"] .status-chip.expired,
-html[data-theme="day"] .status-chip.overdue,
-html[data-theme="day"] .status-chip.terminated { color:#fff; background:#4a4641; border-color:#4a4641; }
 html[data-theme="day"] .data-table th,
 html[data-theme="day"] .performance-table th { background:#f6f3ed; }
 html[data-theme="day"] .data-table tbody tr.clickable:hover,
@@ -422,7 +410,7 @@ html[data-theme="day"] .dashboard-hero {
     linear-gradient(145deg,#ffffff,#eee8dc 58%,#f8f5ef);
   box-shadow:0 24px 70px rgba(55,42,19,.09);
 }
-html[data-theme="day"] .dashboard-hero::after { color:rgba(20,20,20,.035); }
+html[data-theme="day"] .dashboard-hero::after { opacity:.17; filter:saturate(.82) brightness(.92) contrast(1.06); }
 html[data-theme="day"] .live-eyebrow { color:#706a61; }
 html[data-theme="day"] .live-eyebrow span { background:var(--gold); box-shadow:0 0 0 5px rgba(184,148,80,.12); }
 html[data-theme="day"] .dashboard-hero p { color:#716c64; }
@@ -473,11 +461,11 @@ html[data-theme="day"] .unit-directory-header .segmented button b { background:r
 html[data-theme="day"] .unit-directory-header .segmented button.active b { color:#fff; background:#151517; }
 html[data-theme="day"] .status-explanation { background:#faf8f3; }
 html[data-theme="day"] .report-card .report-icon { color:#111; background:var(--gold); }
-html[data-theme="day"] .unit-tabs { background:#f7f4ee; }
 html[data-theme="day"] .unit-tab.active { color:#111; border-color:var(--gold-strong); }
 html[data-theme="day"] .timeline-mark { background:var(--gold); }
 
 /* Night refinement: keep the cinematic view, but introduce gold and slightly softer contrast. */
+html[data-theme="night"] .dashboard-hero::after { opacity:.13; filter:saturate(.92) brightness(1.08); }
 html[data-theme="night"] .nav-item.active { color:#111; background:var(--gold); border-color:var(--gold); }
 html[data-theme="night"] .mode-badge span,
 html[data-theme="night"] .live-eyebrow span { background:var(--gold); box-shadow:0 0 0 5px rgba(200,169,101,.10); }
