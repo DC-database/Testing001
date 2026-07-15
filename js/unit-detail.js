@@ -77,7 +77,7 @@
     }
 
     if (tabId === "kahramaa") {
-      return `<div class="callout">Kahramaa details belong to the permanent unit record. They remain unchanged when a tenant leaves unless the utility account itself changes.</div><div style="height:14px"></div><div class="detail-list">
+      return `<div class="detail-list">
         <div class="detail-item"><span>Electricity Number</span><strong>${u.escapeHTML(unit.kahramaa?.electricityNumber || "—")}</strong></div>
         <div class="detail-item"><span>Water Number</span><strong>${u.escapeHTML(unit.kahramaa?.waterNumber || "—")}</strong></div>
         <div class="detail-item"><span>Account Number</span><strong>${u.escapeHTML(unit.kahramaa?.accountNumber || "—")}</strong></div>
@@ -130,7 +130,7 @@
       const activeSchedule = payments.filter((payment) => payment.contractId === contract?.id && payment.isSchedule);
       const outstandingBalance = activeSchedule.reduce((sum, payment) => sum + Number(payment.balance || 0), 0);
       const nextDue = activeSchedule.find((payment) => !["paid", "cleared", "cancelled", "waived"].includes(payment.status));
-      return `<div class="page-heading" style="margin-bottom:16px"><div><h3 style="margin-bottom:5px">Payment Schedule</h3>${contract ? `<p>Fixed from the contract start date. Actual paid dates never move future due dates.</p>` : ""}</div>${root.auth.can("payment") && contract ? `<div class="page-actions"><button class="button button-primary" data-add-payment>Record payment / cheque</button></div>` : ""}</div>
+      return `<div class="page-heading" style="margin-bottom:16px"><div><h3 style="margin-bottom:5px">Payment Schedule</h3></div>${root.auth.can("payment") && contract ? `<div class="page-actions"><button class="button button-primary" data-add-payment>Record payment / cheque</button></div>` : ""}</div>
       <div class="unit-summary-grid payment-summary-grid">
         <div class="unit-summary-card"><span>Scheduled Installments</span><strong>${u.number(activeSchedule.length)}</strong></div>
         <div class="unit-summary-card"><span>Next Contractual Due</span><strong>${u.date(nextDue?.dueDate)}</strong></div>
@@ -146,7 +146,7 @@
       const openJobs = jobs.filter((job) => ["reported", "reviewed", "scheduled", "dispatched", "in_progress", "waiting_parts", "reopened"].includes(job.status));
       const completedJobs = jobs.filter((job) => ["completed", "verified", "closed"].includes(job.status));
       const totalCost = completedJobs.reduce((sum, job) => sum + Number(job.actualCost || job.estimatedCost || 0), 0);
-      return `<div class="page-heading" style="margin-bottom:16px"><div><h3 style="margin-bottom:5px">Unit maintenance</h3><p>Normal tenant repairs do not change an occupied unit's status. Turnover work controls when an empty unit becomes ready again.</p></div>${root.auth.can("create") ? `<div class="page-actions"><button class="button button-primary" data-add-maintenance>New maintenance job</button></div>` : ""}</div>
+      return `<div class="page-heading" style="margin-bottom:16px"><div><h3 style="margin-bottom:5px">Unit maintenance</h3></div>${root.auth.can("create") ? `<div class="page-actions"><button class="button button-primary" data-add-maintenance>New maintenance job</button></div>` : ""}</div>
         <div class="unit-summary-grid">
           <div class="unit-summary-card"><span>Open Jobs</span><strong>${openJobs.length}</strong></div>
           <div class="unit-summary-card"><span>Completed Jobs</span><strong>${completedJobs.length}</strong></div>

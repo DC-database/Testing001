@@ -93,7 +93,6 @@
           
         </div>
         <div class="dashboard-hero-actions">
-          <button class="button button-ghost" data-open-report="portfolio">Executive PDF</button>
           ${root.auth.can("create") ? `<button class="button button-light" data-route-properties>Manage records</button>` : `<button class="button button-light" data-route-properties>Explore properties</button>`}
         </div>
       </section>
