@@ -76,7 +76,18 @@
     const occupiedEnd = snapshot.occupied / statusTotal * 360;
     const bookedEnd = occupiedEnd + snapshot.booked / statusTotal * 360;
     const vacantEnd = bookedEnd + snapshot.vacant / statusTotal * 360;
-    const maintenanceDisplay = Math.max(0, snapshot.totalUnits - snapshot.occupied - snapshot.booked - snapshot.vacant);
+    const blockedDisplay = Math.max(0, Number(snapshot.blocked ?? (snapshot.totalUnits - snapshot.occupied - snapshot.booked - snapshot.vacant)));
+    const maintenanceDisplay = blockedDisplay;
+    const blockedParts = [
+      ["Under Maintenance", snapshot.underMaintenance],
+      ["Inspection", snapshot.inspection],
+      ["Renovation", snapshot.renovation],
+      ["Unavailable", snapshot.unavailable],
+      ["Other", snapshot.otherBlocked]
+    ].filter(([, count]) => Number(count || 0) > 0);
+    const blockedCaption = blockedParts.length
+      ? blockedParts.map(([label, count]) => `${label}: ${u.number(count)}`).join(" · ")
+      : "No units currently blocked";
     const highestRevenue = propertiesByRevenue[0];
     const lowestOccupancy = propertiesByOccupancy[0];
     const integrityGood = snapshot.integrityIssues.length === 0;
@@ -109,7 +120,23 @@
         <article class="portfolio-kpi occupied clickable" data-kpi="occupied"><span>Occupied</span><strong>${u.number(snapshot.occupied)}</strong><small>${u.percent(snapshot.occupancyRate)} portfolio rate</small></article>
         <article class="portfolio-kpi booked clickable" data-kpi="booked"><span>Booked</span><strong>${u.number(snapshot.booked)}</strong><small>Future occupancy pipeline</small></article>
         <article class="portfolio-kpi vacant clickable" data-kpi="vacant"><span>Ready units</span><strong>${u.number(snapshot.vacant)}</strong><small>${u.money(snapshot.vacancyLoss)} potential / month</small></article>
+        <article class="portfolio-kpi blocked clickable ${blockedDisplay === 0 ? "is-zero" : ""}" data-kpi="blocked"><span>Unavailable / In Progress</span><strong>${u.number(blockedDisplay)}</strong><small>${u.escapeHTML(blockedCaption)}</small></article>
         <article class="portfolio-kpi revenue clickable" data-kpi="monthly"><span>Annual revenue</span><strong>${u.compact(snapshot.annualRevenue)}</strong><small>${u.money(snapshot.monthlyRevenue)} active monthly</small></article>
+      </section>
+
+      <section class="unit-reconciliation" aria-label="Unit status reconciliation">
+        <span>UNIT STATUS RECONCILIATION</span>
+        <div>
+          <button type="button" data-kpi="occupied"><strong>${u.number(snapshot.occupied)}</strong> Occupied</button>
+          <i>+</i>
+          <button type="button" data-kpi="booked"><strong>${u.number(snapshot.booked)}</strong> Booked</button>
+          <i>+</i>
+          <button type="button" data-kpi="vacant"><strong>${u.number(snapshot.vacant)}</strong> Ready</button>
+          <i>+</i>
+          <button type="button" data-kpi="blocked"><strong>${u.number(blockedDisplay)}</strong> In Progress</button>
+          <b>= ${u.number(snapshot.totalUnits)} Total</b>
+        </div>
+        <small>Every unit is accounted for. Open any category to review the included units.</small>
       </section>
 
       <section class="executive-strip">
@@ -179,7 +206,7 @@
               <button data-kpi="occupied"><i class="occupied"></i><span>Occupied<small>${u.percent(snapshot.occupied / statusTotal * 100)}</small></span><b>${u.number(snapshot.occupied)}</b></button>
               <button data-kpi="booked"><i class="booked"></i><span>Booked<small>${u.percent(snapshot.booked / statusTotal * 100)}</small></span><b>${u.number(snapshot.booked)}</b></button>
               <button data-kpi="vacant"><i class="vacant"></i><span>Ready<small>${u.percent(snapshot.vacant / statusTotal * 100)}</small></span><b>${u.number(snapshot.vacant)}</b></button>
-              <button><i class="maintenance"></i><span>Work / inspection<small>${u.percent(maintenanceDisplay / statusTotal * 100)}</small></span><b>${u.number(maintenanceDisplay)}</b></button>
+              <button data-kpi="blocked"><i class="maintenance"></i><span>Unavailable / in progress<small>${u.percent(maintenanceDisplay / statusTotal * 100)}</small></span><b>${u.number(maintenanceDisplay)}</b></button>
             </div>
           </div>
         </article>
@@ -260,8 +287,8 @@
     view.querySelectorAll("[data-open-report]").forEach((el) => el.addEventListener("click", () => root.modules.reports.openReport(el.dataset.openReport)));
     view.querySelectorAll("[data-kpi]").forEach((el) => el.addEventListener("click", () => {
       const key = el.dataset.kpi;
-      if (["units", "occupied", "booked", "vacant", "monthly"].includes(key)) {
-        const status = ["occupied", "booked", "vacant"].includes(key) ? key : "all";
+      if (["units", "occupied", "booked", "vacant", "blocked", "monthly"].includes(key)) {
+        const status = ["occupied", "booked", "vacant", "blocked"].includes(key) ? key : "all";
         root.router.navigate("properties", { status });
       } else if (key === "expiring") root.router.navigate("leases", { status: "expiring" });
     }));

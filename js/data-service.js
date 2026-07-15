@@ -1032,8 +1032,13 @@
     const booked = statusCounts.booked || 0;
     const vacant = statusCounts.vacant || 0;
     const inspection = statusCounts.inspection || 0;
+    const underMaintenance = statusCounts.maintenance || 0;
     const renovation = statusCounts.renovation || 0;
-    const maintenance = (statusCounts.maintenance || 0) + renovation;
+    const unavailable = statusCounts.unavailable || 0;
+    const knownBlocked = inspection + underMaintenance + renovation + unavailable;
+    const blocked = Math.max(0, totalUnits - occupied - booked - vacant);
+    const otherBlocked = Math.max(0, blocked - knownBlocked);
+    const maintenance = underMaintenance + renovation;
     const monthlyRevenue = propertyStats.reduce((sum, property) => sum + property.monthlyRevenue, 0);
     const potentialRevenue = propertyStats.reduce((sum, property) => sum + property.potentialRevenue, 0);
     const vacancyLoss = propertyStats.reduce((sum, property) => sum + property.vacancyLoss, 0);
@@ -1114,9 +1119,13 @@
       occupied,
       booked,
       vacant,
+      blocked,
       maintenance,
+      underMaintenance,
       inspection,
       renovation,
+      unavailable,
+      otherBlocked,
       occupancyRate: totalUnits ? occupied / totalUnits * 100 : 0,
       monthlyRevenue,
       annualRevenue: monthlyRevenue * 12,

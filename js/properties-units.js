@@ -6,7 +6,7 @@
 
   let propertySearch = "";
   let unitStatusFilter = "all";
-  const UNIT_STATUS_OPTIONS = ["all", "occupied", "booked", "vacant", "inspection", "work"];
+  const UNIT_STATUS_OPTIONS = ["all", "occupied", "booked", "vacant", "inspection", "work", "blocked"];
 
 
   const PROPERTY_PLACEHOLDERS = {
@@ -98,6 +98,7 @@
     if (status === "vacant") return "Ready";
     if (status === "inspection") return "Inspection";
     if (status === "work") return "Maintenance / Renovation";
+    if (status === "blocked") return "Unavailable / In Progress";
     if (status === "maintenance") return "Under Maintenance";
     if (status === "renovation") return "Under Renovation";
     return u.titleCase(status);
@@ -106,6 +107,7 @@
   function statusMatches(unit, filter) {
     if (filter === "all") return true;
     if (filter === "work") return ["maintenance", "renovation"].includes(unit.status);
+    if (filter === "blocked") return ["inspection", "maintenance", "renovation", "unavailable"].includes(unit.status);
     return unit.status === filter;
   }
 
@@ -172,7 +174,8 @@
       booked: "Booked shows units reserved for an incoming tenant or upcoming contract.",
       vacant: "Ready shows empty units that passed inspection and can accept another tenant.",
       inspection: "Inspection shows units waiting for the move-out or turnover check before they can be offered again.",
-      work: "Maintenance / Renovation shows empty units unavailable while major work is being completed. Normal tenant repair requests remain under Occupied."
+      work: "Maintenance / Renovation shows empty units unavailable while major work is being completed. Normal tenant repair requests remain under Occupied.",
+      blocked: "Unavailable / In Progress combines inspection, maintenance, renovation and unavailable units so the portfolio total always reconciles."
     };
 
     const unitMatchesTerm = (unit, term) => {
