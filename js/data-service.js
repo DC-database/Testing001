@@ -477,6 +477,108 @@
     return id ? db.get("contracts", id) : null;
   }
 
+  async function getContractTemplate() {
+    const setting = await db.get("settings", "contractTemplate");
+    return setting?.value || null;
+  }
+
+  async function saveContractTemplate(template) {
+    if (!root.auth.can("admin")) throw new Error("Only the Administrator can change the master contract template.");
+    if (!template || !Array.isArray(template.clauses) || template.clauses.length !== 22) {
+      throw new Error("The bilingual contract template must contain 22 paired clauses.");
+    }
+    const previous = await getContractTemplate();
+    const saved = {
+      ...template,
+      updatedAt: Date.now(),
+      updatedBy: currentUserMeta().userId
+    };
+    await db.put("settings", { key: "contractTemplate", value: saved });
+    await audit("CONTRACT_TEMPLATE_UPDATED", "system", "contractTemplate", `Bilingual contract template version ${saved.version || 1} saved.`, previous, saved);
+    return saved;
+  }
+
+  async function saveContractDocument(contractId, contractDocument) {
+    if (!root.auth.can("contract") && !root.auth.can("admin")) throw new Error("Your role cannot edit tenancy contracts.");
+    const contract = await getContract(contractId);
+    if (!contract) throw new Error("Contract record not found.");
+    const previousDocument = contract.contractDocument || null;
+    if (previousDocument?.status === "final" && !root.auth.can("admin")) {
+      throw new Error("This contract is approved and locked. An Administrator must reopen it before editing.");
+    }
+    if (!contractDocument || !Array.isArray(contractDocument.clauses) || contractDocument.clauses.length !== 22) {
+      throw new Error("The contract must contain 22 English/Arabic clause pairs.");
+    }
+    const now = Date.now();
+    const document = {
+      ...contractDocument,
+      contractId,
+      status: previousDocument?.status === "final" ? "final" : "draft",
+      version: Math.max(1, Number(contractDocument.version || previousDocument?.version || 1)),
+      createdAt: previousDocument?.createdAt || contractDocument.createdAt || now,
+      createdBy: previousDocument?.createdBy || contractDocument.createdBy || currentUserMeta().userId,
+      updatedAt: now,
+      updatedBy: currentUserMeta().userId
+    };
+    const documentContractNumber = String(document.details?.contractNumber || contract.contractNumber).trim();
+    const updated = { ...contract, contractNumber: documentContractNumber || contract.contractNumber, contractDocument: document, updatedAt: now, updatedBy: currentUserMeta().userId };
+    await db.put("contracts", updated);
+    await audit("CONTRACT_DOCUMENT_SAVED", "unit", contract.unitId, `${contract.contractNumber} bilingual contract draft saved.`, previousDocument, document);
+    return updated;
+  }
+
+  async function approveContractDocument(contractId, contractDocument) {
+    if (!["ceo", "admin"].includes(root.state.user?.role)) throw new Error("CEO or Administrator approval is required.");
+    const contract = await getContract(contractId);
+    if (!contract) throw new Error("Contract record not found.");
+    if (!contractDocument || !Array.isArray(contractDocument.clauses) || contractDocument.clauses.length !== 22) {
+      throw new Error("The contract must contain 22 English/Arabic clause pairs.");
+    }
+    const now = Date.now();
+    const document = {
+      ...contractDocument,
+      contractId,
+      status: "final",
+      version: Math.max(1, Number(contractDocument.version || contract.contractDocument?.version || 1)),
+      approvedAt: now,
+      approvedBy: currentUserMeta().userId,
+      approvedByName: currentUserMeta().userName,
+      createdAt: contract.contractDocument?.createdAt || contractDocument.createdAt || now,
+      createdBy: contract.contractDocument?.createdBy || contractDocument.createdBy || currentUserMeta().userId,
+      updatedAt: now,
+      updatedBy: currentUserMeta().userId
+    };
+    const documentContractNumber = String(document.details?.contractNumber || contract.contractNumber).trim();
+    const updated = { ...contract, contractNumber: documentContractNumber || contract.contractNumber, contractDocument: document, updatedAt: now, updatedBy: currentUserMeta().userId };
+    await db.put("contracts", updated);
+    await audit("CONTRACT_DOCUMENT_APPROVED", "unit", contract.unitId, `${contract.contractNumber} bilingual contract approved and locked by ${currentUserMeta().userName}.`, contract.contractDocument || null, document);
+    return updated;
+  }
+
+  async function reopenContractDocument(contractId) {
+    if (!root.auth.can("admin")) throw new Error("Only the Administrator can reopen a final contract.");
+    const contract = await getContract(contractId);
+    if (!contract?.contractDocument) throw new Error("No saved contract document was found.");
+    const previous = contract.contractDocument;
+    const now = Date.now();
+    const document = {
+      ...previous,
+      status: "draft",
+      version: Math.max(1, Number(previous.version || 1)) + 1,
+      reopenedAt: now,
+      reopenedBy: currentUserMeta().userId,
+      updatedAt: now,
+      updatedBy: currentUserMeta().userId
+    };
+    delete document.approvedAt;
+    delete document.approvedBy;
+    delete document.approvedByName;
+    const updated = { ...contract, contractDocument: document, updatedAt: now, updatedBy: currentUserMeta().userId };
+    await db.put("contracts", updated);
+    await audit("CONTRACT_DOCUMENT_REOPENED", "unit", contract.unitId, `${contract.contractNumber} reopened as document version ${document.version}.`, previous, document);
+    return updated;
+  }
+
   async function getPayments() {
     const rows = await db.getAll("payments");
     return rows.map(normalizePayment).sort((a, b) => String(a.dueDate || "").localeCompare(String(b.dueDate || "")));
@@ -1443,6 +1545,11 @@
     getContracts,
     getContractsByUnit,
     getContract,
+    getContractTemplate,
+    saveContractTemplate,
+    saveContractDocument,
+    approveContractDocument,
+    reopenContractDocument,
     getPayments,
     getPaymentsByUnit,
     getMaintenanceJobs,

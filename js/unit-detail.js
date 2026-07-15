@@ -106,10 +106,11 @@
     if (tabId === "contract") {
       if (!contract) return `${root.ui.emptyState("No active contract", "Create a tenant and contract to occupy or book this unit.")}${root.auth.can("contract") ? `<div class="form-actions"><button class="button button-primary" data-new-tenant>Create tenant & contract</button></div>` : ""}`;
       const daysLeft = u.daysBetween(new Date(), contract.endDate);
+      const documentStatus = contract.contractDocument?.status || "draft";
       return `<div class="unit-summary-grid">
         <div class="unit-summary-card"><span>Contract</span><strong>${u.escapeHTML(contract.contractNumber)}</strong></div>
-        <div class="unit-summary-card"><span>Status</span><strong><span class="status-chip ${contract.status}">${u.titleCase(contract.status)}</span></strong></div>
-        <div class="unit-summary-card"><span>Monthly Rent</span><strong>${u.money(contract.monthlyRent)}</strong></div>
+        <div class="unit-summary-card"><span>Lease Status</span><strong><span class="status-chip ${contract.status}">${u.titleCase(contract.status)}</span></strong></div>
+        <div class="unit-summary-card"><span>Document</span><strong><span class="status-chip ${documentStatus === "final" ? "completed" : "pending"}">${documentStatus === "final" ? "Approved & Locked" : "Draft"}</span></strong></div>
         <div class="unit-summary-card"><span>Days Remaining</span><strong>${daysLeft >= 0 ? daysLeft : `${Math.abs(daysLeft)} overdue`}</strong></div>
       </div><div class="detail-list">
         <div class="detail-item"><span>Start Date</span><strong>${u.date(contract.startDate)}</strong></div>
@@ -123,7 +124,7 @@
         <div class="detail-item"><span>Grace Period</span><strong>${u.number(contract.gracePeriodDays || 0)} days</strong></div>
         <div class="detail-item"><span>Notice Period</span><strong>${u.escapeHTML(contract.noticePeriodDays)} days</strong></div>
         <div class="detail-item"><span>Terms</span><strong>${u.escapeHTML(contract.terms || "—")}</strong></div>
-      </div><div class="form-actions"><button class="button button-secondary" data-print-contract>${root.ui.documentActionText("Print official contract", "Contract PDF")}</button>${root.auth.can("contract") ? `<button class="button button-secondary" data-close-tenancy>Close contract</button><button class="button button-primary" data-new-tenant>Renew / replace</button>` : ""}</div>`;
+      </div><div class="form-actions"><button class="button button-secondary" data-print-contract>${root.ui.documentActionText("Preview / Print Contract", "Contract PDF")}</button>${root.auth.can("contract") || ["ceo", "admin"].includes(root.state.user?.role) ? `<button class="button button-primary" data-open-contract-editor>${documentStatus === "final" ? "Review Bilingual Contract" : "Review / Edit Bilingual Contract"}</button>` : ""}${root.auth.can("contract") ? `<button class="button button-secondary" data-close-tenancy>Close contract</button><button class="button button-primary" data-new-tenant>Renew / replace</button>` : ""}</div>`;
     }
 
     if (tabId === "payments") {
@@ -174,7 +175,11 @@
     }));
     instance.modal.querySelectorAll("[data-new-tenant]").forEach((button) => button.addEventListener("click", () => openTenantContractForm(bundle, instance)));
     instance.modal.querySelectorAll("[data-close-tenancy]").forEach((button) => button.addEventListener("click", () => closeTenancy(bundle, instance)));
-    instance.modal.querySelector("[data-print-contract]")?.addEventListener("click", () => printContract(bundle));
+    instance.modal.querySelector("[data-print-contract]")?.addEventListener("click", () => root.modules.contractDocument.printContract(bundle));
+    instance.modal.querySelector("[data-open-contract-editor]")?.addEventListener("click", () => {
+      instance.close();
+      root.modules.contractDocument.openEditor(bundle, { returnToUnit: true });
+    });
     instance.modal.querySelector("[data-add-payment]")?.addEventListener("click", () => openPaymentForm(bundle, instance));
     instance.modal.querySelectorAll("[data-record-payment]").forEach((button) => button.addEventListener("click", () => openPaymentForm(bundle, instance, { scheduleId: button.dataset.recordPayment })));
     instance.modal.querySelector("[data-add-maintenance]")?.addEventListener("click", () => {
@@ -353,18 +358,7 @@
   }
 
   function printContract(bundle) {
-    const { property, unit, tenant, contract } = bundle;
-    if (!contract || !tenant) return root.ui.toast("No active contract to print.", "error");
-    root.ui.printDocument(`Contract ${contract.contractNumber}`, `<header><div><div class="brand">59 REAL ESTATE</div><div class="muted">Private Property Portfolio</div></div><div class="meta"><h1 class="title">Residential / Commercial Lease Contract</h1><div>${u.escapeHTML(contract.contractNumber)}</div></div></header>
-      <p>This contract is generated directly from the 59 Real Estate system. Final legal terms and Arabic wording must be approved before production use.</p>
-      <div class="grid">
-        <div class="item"><span>Property</span><strong>${u.escapeHTML(property.name)}</strong></div><div class="item"><span>Unit</span><strong>${u.escapeHTML(unit.unitNumber)} · ${u.escapeHTML(unit.aptType || "Unit")}</strong></div>
-        <div class="item"><span>Tenant</span><strong>${u.escapeHTML(tenant.name)}</strong></div><div class="item"><span>QID / CR</span><strong>${u.escapeHTML(tenant.qidOrCr || "—")}</strong></div>
-        <div class="item"><span>Contract Start</span><strong>${u.date(contract.startDate)}</strong></div><div class="item"><span>Contract End</span><strong>${u.date(contract.endDate)}</strong></div>
-        <div class="item"><span>Monthly Rent</span><strong>${u.money(contract.monthlyRent)}</strong></div><div class="item"><span>Annual Rent</span><strong>${u.money(contract.annualRent)}</strong></div>
-        <div class="item"><span>Security Deposit</span><strong>${u.money(contract.securityDeposit)}</strong></div><div class="item"><span>Payment Frequency</span><strong>${u.escapeHTML(contract.paymentFrequency)}</strong></div>
-        <div class="item"><span>Kahramaa Account</span><strong>${u.escapeHTML(unit.kahramaa?.accountNumber || "—")}</strong></div><div class="item"><span>Electricity / Water</span><strong>${u.escapeHTML(unit.kahramaa?.electricityNumber || "—")} / ${u.escapeHTML(unit.kahramaa?.waterNumber || "—")}</strong></div>
-      </div><h3>Terms and conditions</h3><p>${u.escapeHTML(contract.terms || "")}</p><div class="signature-grid"><div class="signature">For 59 Real Estate</div><div class="signature">Tenant Signature</div></div><div class="footer">59 Real Estate · Confidential · Generated from the 59 Real Estate system</div>`);
+    return root.modules.contractDocument.printContract(bundle);
   }
 
   function printReceipt(bundle, payment) {

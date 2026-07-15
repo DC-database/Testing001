@@ -30,7 +30,7 @@
 
   root.config = {
     appName: "59 Real Estate",
-    version: "0.8.7",
+    version: "0.8.8",
     dataProvider: "indexeddb",
     inactivityMinutes: 30,
     currency: "QAR",
