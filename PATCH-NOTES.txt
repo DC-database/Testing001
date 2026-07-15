@@ -1,37 +1,49 @@
-59 REAL ESTATE — PATCH v0.8.7
-Base version: v0.8.6
-Patch type: Dashboard unit-status reconciliation
+59 REAL ESTATE - PATCH v0.8.8
+Base version: v0.8.7
+Patch name: Bilingual Tenancy Contract Generator
 
 PURPOSE
-The Portfolio Overview previously displayed Total Units, Occupied, Booked and Ready Units, but units under inspection, maintenance, renovation or unavailable status were not represented in the main KPI row. This made a correct total appear incomplete to an executive viewer.
+This patch converts the existing simple contract printout into a controlled bilingual tenancy contract workspace based on the supplied four-page company contract format.
 
-CHANGES
-1. Added a permanent “Unavailable / In Progress” KPI card.
-   - The card always remains visible, including when its value is 0.
-   - At zero it shows “No units currently blocked.”
-   - At a non-zero value it explains the included sub-statuses, such as Under Maintenance, Inspection, Renovation or Unavailable.
+MAIN FEATURES
+1. English-left / Arabic-right contract layout.
+2. Four fixed A4 pages matching the supplied contract structure:
+   - Page 1: Parties and clauses 1-3
+   - Page 2: Clauses 4-11
+   - Page 3: Clauses 12-18
+   - Page 4: Clauses 19-22 and signature boxes
+3. Actual 59 Real Estate SVG logo in the contract header.
+4. Automatic data from the active property, unit, tenant and lease:
+   - Tenant name, QID/CR, mobile and email
+   - Property and unit information
+   - Electricity and water numbers
+   - Rent, security deposit, dates and notice period
+   - Payment method and maintenance contacts
+5. Editable Contract Details and paired English/Arabic clauses.
+6. Draft watermark on unapproved contracts.
+7. Save Draft, Preview/PDF, Approve & Lock and Administrator Reopen workflow.
+8. Approved contract snapshots remain unchanged when the master template is edited later.
+9. Administrator master template editor under Settings > Data Management.
+10. Contract changes are recorded in the audit history.
+11. Desktop print and mobile PDF/share-ready document preview.
 
-2. Added a Unit Status Reconciliation strip directly below the KPI cards.
-   Example:
-   373 Occupied + 11 Booked + 10 Ready + 1 In Progress = 395 Total
+ROLE BEHAVIOUR IN THE CURRENT DEMO
+- Property Manager: edit and save contract drafts.
+- CEO: review and approve/lock a contract.
+- Administrator: edit drafts, approve, reopen final contracts and edit the master template.
 
-3. Added secure calculation fields to the dashboard snapshot:
-   - blocked
-   - underMaintenance
-   - inspection
-   - renovation
-   - unavailable
-   - otherBlocked
+PRODUCTION FIREBASE NOTE
+The new contract document is stored inside its related contract record. When Firebase becomes the live provider, the same data-service functions should write the document snapshot to Firebase and Firebase Security Rules must enforce the role workflow.
 
-4. Added dashboard drill-down.
-   - Clicking the new KPI or reconciliation item opens Properties & Units filtered to all blocked/in-progress units.
-   - The filter includes Inspection, Maintenance, Renovation and Unavailable statuses.
+LEGAL NOTE
+The bilingual wording is prepared from the supplied company contract and cleaned for system use. The final English and Arabic legal text must be reviewed and approved by the company's authorized legal adviser before production signing.
 
-5. Added responsive desktop and mobile presentation.
-   - Desktop displays six KPI cards and automatically changes to a three-column layout on narrower screens.
-   - Mobile gives the blocked KPI and reconciliation section a dedicated full-width layout.
-
-DATA SAFETY
-- No IndexedDB records are modified.
-- No property, unit, tenant, contract, payment or maintenance data is deleted.
-- This patch changes only calculations, filtering and presentation.
+CHANGED / NEW FILES
+- index.html
+- version.json
+- js/app-state.js
+- js/data-service.js
+- js/contract-document.js (new)
+- js/unit-detail.js
+- js/settings.js
+- styles/contract-document.css (new)
