@@ -1,6 +1,5 @@
 {
-  "version": "0.8.8",
-  "name": "59 Real Estate",
-  "channel": "bilingual-tenancy-contract",
-  "updated": "2026-07-15"
+  "version": "11.3.3",
+  "title": "Batch Entry Undefined Attention Guard",
+  "message": "Fixes Batch Entry multi-row save failing when attention is blank or intentionally cleared. Firebase payloads no longer contain undefined attention values. WorkDesk recovery from 11.3.2 is retained."
 }

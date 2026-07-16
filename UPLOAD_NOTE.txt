@@ -1,0 +1,15 @@
+IBA System Patch 11.3.3 — Batch Entry Undefined Attention Guard
+
+Upload only these files:
+- app.js
+- index.html
+- version.json
+
+Purpose:
+- Fix Batch Entry multi-row update error: Firebase update failed because attention was undefined.
+- Keep blank/None attention as an empty string instead of undefined.
+- Preserve WorkDesk recovery behavior from 11.3.2.
+
+After upload:
+- Hard refresh Chrome with Ctrl + F5.
+- Test Batch Entry with multiple selected invoices.
